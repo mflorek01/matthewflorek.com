@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, BarChart2 } from "lucide-react";
-import { Link } from "wouter";
+import { FileText, Linkedin } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -14,25 +13,26 @@ export default function Hero() {
           className="max-w-3xl"
         >
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Data-Driven Insights & Financial Analysis
+            Data Analysis & Financial Insights
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Transforming complex data into actionable business intelligence through
-            advanced analytics and financial modeling.
+            Recent finance graduate with a strong foundation in data analysis,
+            financial modeling, and a passion for transforming complex data into
+            actionable insights.
           </p>
           <div className="flex gap-4">
-            <Link href="/portfolio">
+            <a href="/Matthew Florek Resume.pdf" target="_blank" rel="noopener noreferrer">
               <Button size="lg">
-                View Portfolio
-                <ChevronRight className="ml-2 h-4 w-4" />
+                View Resume
+                <FileText className="ml-2 h-4 w-4" />
               </Button>
-            </Link>
-            <Link href="/about">
+            </a>
+            <a href="https://linkedin.com/in/matthew-florek" target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="lg">
-                Learn More
-                <BarChart2 className="ml-2 h-4 w-4" />
+                LinkedIn
+                <Linkedin className="ml-2 h-4 w-4" />
               </Button>
-            </Link>
+            </a>
           </div>
         </motion.div>
       </div>

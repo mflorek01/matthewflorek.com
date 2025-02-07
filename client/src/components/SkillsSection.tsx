@@ -7,15 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-
-const skills = [
-  { name: "Data Analysis", level: 90 },
-  { name: "Financial Modeling", level: 85 },
-  { name: "SQL", level: 88 },
-  { name: "Python", level: 82 },
-  { name: "Excel/VBA", level: 95 },
-  { name: "Power BI", level: 87 },
-];
+import { skills } from "@/lib/data";
 
 export default function SkillsSection() {
   return (
@@ -29,7 +21,7 @@ export default function SkillsSection() {
         >
           <h2 className="text-3xl font-bold mb-8">Technical Skills</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {skills.map((skill, index) => (
+            {skills.map((skill) => (
               <Card key={skill.name}>
                 <CardHeader>
                   <CardTitle>{skill.name}</CardTitle>
@@ -41,6 +33,7 @@ export default function SkillsSection() {
               </Card>
             ))}
           </div>
+          {/* Note: To edit skills, modify the skills array in src/lib/data.ts */}
         </motion.div>
       </div>
     </section>
