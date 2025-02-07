@@ -46,7 +46,7 @@ export default function Hero() {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg transform -rotate-2" />
               <img
-                src="/attached_assets/2023-03-03_FCBHeadshots-35.jpg"
+                src="/assets/2023-03-03_FCBHeadshots-35.jpg"
                 alt="Matthew Florek portrait"
                 className="w-full h-[500px] object-cover rounded-lg shadow-lg transform rotate-2"
               />
