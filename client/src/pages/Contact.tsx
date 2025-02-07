@@ -1,11 +1,11 @@
 import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail, Linkedin, Github } from "lucide-react";
+import { Mail, Linkedin } from "lucide-react";
 import ContactSection from "@/components/ContactForm";
 
 export default function Contact() {
-  const contactEmail = "contact@example.com"; // Replace with your actual email
+  const contactEmail = "matthew.florek03@gmail.com";
 
   return (
     <>
@@ -27,7 +27,7 @@ export default function Contact() {
           >
             <h1 className="text-4xl font-bold mb-8">Get in Touch</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
               <Card>
                 <CardContent className="p-4 flex items-center gap-2">
                   <Mail className="h-4 w-4" />
@@ -40,25 +40,12 @@ export default function Contact() {
                 <CardContent className="p-4 flex items-center gap-2">
                   <Linkedin className="h-4 w-4" />
                   <a 
-                    href="https://linkedin.com/in/matthew"
+                    href="https://www.linkedin.com/in/matthew-florek"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm hover:text-primary"
                   >
-                    linkedin.com/in/matthew
-                  </a>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 flex items-center gap-2">
-                  <Github className="h-4 w-4" />
-                  <a 
-                    href="https://github.com/matthew"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm hover:text-primary"
-                  >
-                    github.com/matthew
+                    linkedin.com/in/matthew-florek
                   </a>
                 </CardContent>
               </Card>

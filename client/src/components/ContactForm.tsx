@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
 
 export default function ContactSection() {
-  const emailAddress = "contact@example.com"; // Replace with your actual email
+  const emailAddress = "matthew.florek03@gmail.com";
   const subject = "Portfolio Contact";
   const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}`;
 
