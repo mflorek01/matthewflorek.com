@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Navigation from "@/components/Navigation";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
@@ -22,6 +23,7 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <GoogleAnalytics />
       <div className="min-h-screen bg-background">
         <Navigation />
         <main>
