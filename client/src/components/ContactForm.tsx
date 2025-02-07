@@ -31,17 +31,13 @@ export default function ContactForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    toast({
-      title: "Message Sent",
-      description: "Thank you for your message. I'll get back to you soon!",
-    });
-    form.reset();
-  }
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        action="https://formspree.io/f/YOUR_FORM_ID"
+        method="POST"
+        className="space-y-6"
+      >
         <FormField
           control={form.control}
           name="name"
