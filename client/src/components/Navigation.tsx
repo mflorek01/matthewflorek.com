@@ -7,7 +7,6 @@ export default function Navigation() {
   const links = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
-    { href: "/portfolio", label: "Portfolio" },
     { href: "/contact", label: "Contact" },
   ];
 
@@ -18,7 +17,7 @@ export default function Navigation() {
           <Link href="/">
             <span className="text-xl font-bold text-primary">Matthew Florek</span>
           </Link>
-          
+
           <div className="hidden md:flex gap-6">
             {links.map((link) => (
               <Link key={link.href} href={link.href}>
