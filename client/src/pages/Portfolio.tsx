@@ -13,13 +13,13 @@ const projects = [
   {
     title: "Financial Dashboard Development",
     description: "Created interactive financial dashboards using Power BI",
-    image: "https://images.unsplash.com/photo-1563986768711-b3bde3dc821e",
+    image: "./assets/dashboard.jpg", // Using relative path
     tags: ["Power BI", "Financial Analysis", "Dashboard Design"],
   },
   {
     title: "Market Analysis Project",
     description: "Comprehensive market analysis using Python and SQL",
-    image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643",
+    image: "./assets/market-analysis.jpg", // Using relative path
     tags: ["Python", "SQL", "Data Analysis"],
   },
 ];
