@@ -46,7 +46,7 @@ export default function Hero() {
               <img
                 src="/assets/headshot.png"
                 alt="Matthew Florek portrait"
-                className="w-full h-[500px] object-cover rounded-lg"
+                className="w-full max-h-[600px] object-contain rounded-lg"
               />
             </div>
           </motion.div>
