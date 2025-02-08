@@ -42,7 +42,6 @@ export default function Hero() {
             className="hidden md:block"
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg transform -rotate-2" />
               <img
                 src="/assets/headshot.png"
                 alt="Matthew Florek portrait"
