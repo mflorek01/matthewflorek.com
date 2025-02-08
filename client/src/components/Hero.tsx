@@ -17,7 +17,7 @@ export default function Hero() {
               Data Analysis & Financial Insights
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Fresh college graduate from Northern Arizona University with hands-on data analytics experience and finance acumen ready to hit the ground running.
+              Early career analyst ready to contribute value from day one. 
             </p>
             <div className="flex gap-4">
               <a href="/assets/Matthew Florek Resume.pdf" target="_blank" rel="noopener noreferrer">
