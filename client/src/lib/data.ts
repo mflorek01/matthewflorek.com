@@ -2,8 +2,8 @@ export const skills = [
   { name: "Microsoft Excel", level: 95 },
   { name: "Financial Modeling", level: 80 },
   { name: "Data Analysis", level: 90 },
-  { name: "Tableau", level: 75 },
   { name: "Financial Literacy", level: 85 },
+  { name: "Tableau", level: 75 },
 ] as const;
 
 export const education = [
