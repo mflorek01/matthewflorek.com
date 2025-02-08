@@ -1,13 +1,9 @@
 import { motion } from "framer-motion";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { skills } from "@/lib/data";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 
 export default function SkillsSection() {
   return (
@@ -23,17 +19,22 @@ export default function SkillsSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {skills.map((skill) => (
               <Card key={skill.name}>
-                <CardHeader>
-                  <CardTitle>{skill.name}</CardTitle>
-                  <CardDescription>{skill.desc}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Progress value={skill.level} className="h-2" />
-                </CardContent>
+                <Collapsible>
+                  <CollapsibleTrigger>
+                    <CardHeader>
+                      <CardTitle>{skill.name}</CardTitle>
+                      <CardDescription>Click to expand for details</CardDescription>
+                    </CardHeader>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <CardContent>
+                      <Progress value={skill.level} className="h-2" />
+                    </CardContent>
+                  </CollapsibleContent>
+                </Collapsible>
               </Card>
             ))}
           </div>
-          {/* Note: To edit skills, modify the skills array in src/lib/data.ts */}
         </motion.div>
       </div>
     </section>
