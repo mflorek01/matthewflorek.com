@@ -25,7 +25,7 @@ export default function SkillsSection() {
               <Card key={skill.name}>
                 <CardHeader>
                   <CardTitle>{skill.name}</CardTitle>
-                  <CardDescription>Professional Proficiency</CardDescription>
+                  <CardDescription>{skill.desc}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Progress value={skill.level} className="h-2" />
