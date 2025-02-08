@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { skills } from "@/lib/data";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
 
 export default function SkillsSection() {
   return (
@@ -18,19 +18,25 @@ export default function SkillsSection() {
           <h2 className="text-3xl font-bold mb-8">Technical Skills</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {skills.map((skill) => (
-              <Card key={skill.name}>
+              <Card key={skill.name} className="relative">
                 <Collapsible>
-                  <CollapsibleTrigger>
-                    <CardHeader>
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-center">
                       <CardTitle>{skill.name}</CardTitle>
-                      <CardDescription>Click to expand for details</CardDescription>
-                    </CardHeader>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <CardContent>
-                      <Progress value={skill.level} className="h-2" />
-                    </CardContent>
-                  </CollapsibleContent>
+                      <CollapsibleTrigger className="p-2 hover:bg-muted rounded-full transition-colors">
+                        <ChevronDown className="h-4 w-4" />
+                      </CollapsibleTrigger>
+                    </div>
+                    <Progress value={skill.level} className="h-2 mt-2" />
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="mt-2">{skill.desc}</CardDescription>
+                    <CollapsibleContent>
+                      <div className="pt-4 border-t mt-4">
+                        <p className="text-sm text-muted-foreground">{skill.expand}</p>
+                      </div>
+                    </CollapsibleContent>
+                  </CardContent>
                 </Collapsible>
               </Card>
             ))}
