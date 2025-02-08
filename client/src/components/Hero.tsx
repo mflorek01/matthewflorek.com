@@ -20,7 +20,7 @@ export default function Hero() {
               Fresh college graduate from Northern Arizona University with hands-on data analytics experience and finance acumen ready to hit the ground running.
             </p>
             <div className="flex gap-4">
-              <a href="/client/public/assets/Matthew Florek Resume.pdf" target="_blank" rel="noopener noreferrer">
+              <a href="/assets/Matthew Florek Resume.pdf" target="_blank" rel="noopener noreferrer">
                 <Button size="lg">
                   View Resume
                   <FileText className="ml-2 h-4 w-4" />
