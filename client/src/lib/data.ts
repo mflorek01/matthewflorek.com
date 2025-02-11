@@ -24,11 +24,5 @@ export const experience = [
 
 export const blogPosts = [
   {
-    title: "Example Post",
-    description: "My approach to analyzing complex datasets and deriving meaningful insights",
-    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a",
-    content: `
-      This is an example post to demonstrate the blog post feature.
-    `
   },
 ] as const;
