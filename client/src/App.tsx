@@ -8,6 +8,7 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
+import IsochroneMap from '.@/pages/asumap';
 
 function Router() {
   return (
