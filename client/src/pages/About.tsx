@@ -37,47 +37,6 @@ export default function About() {
                     academic journey has equipped me with the technical skills and analytical
                     mindset needed to tackle complex financial challenges.
 
-                    temp_txt:
-                    <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>3D Graph</title>
-    <style>
-      body { margin: 0; }
-      #3d-graph { width: 100vw; height: 100vh; }
-    </style>
-    <script src="https://unpkg.com/3d-force-graph"></script>
-  </head>
-  <body>
-    <div id="3d-graph"></div>
-
-    <script>
-      // Example data: nodes and links
-      const graphData = {
-        nodes: [
-          { id: 'A' },
-          { id: 'B' },
-          { id: 'C' },
-          { id: 'D' },
-          { id: 'E' }
-        ],
-        links: [
-          { source: 'A', target: 'B' },
-          { source: 'A', target: 'C' },
-          { source: 'B', target: 'D' },
-          { source: 'C', target: 'E' }
-        ]
-      };
-
-      // Create the graph
-      const Graph = ForceGraph3D()
-        (document.getElementById('3d-graph'))
-        .graphData(graphData)
-        .nodeAutoColorBy('id');
-    </script>
-  </body>
-</html>
 
                   </p>
                   <p className="text-lg text-muted-foreground">
