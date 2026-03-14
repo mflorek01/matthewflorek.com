@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operations Editor | Matthew Florek</title>
+    <meta name="description" content="Local copy editor for Matthew Florek's site." />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="ops.css" />
+  </head>
+  <body class="ops-body">
+    <div class="ops-shell">
+      <aside class="ops-sidebar">
+        <div class="ops-sidebar-head">
+          <p class="eyebrow">Operations</p>
+          <h1>Copy editor</h1>
+          <p>
+            Edit only the text content. Use the formatting buttons for bold,
+            italic, and line breaks, then save back to disk on this VM.
+          </p>
+        </div>
+
+        <section class="ops-upload">
+          <p class="eyebrow">Portrait Image</p>
+          <p class="ops-upload-copy">
+            Upload a PNG, JPG, or WebP file to replace the hero image. The new
+            file is written into <code>assets/</code> and the site copy is
+            updated automatically.
+          </p>
+          <p class="ops-upload-current">
+            Current image:
+            <span id="current-image-path">assets/profile-placeholder.svg</span>
+          </p>
+          <input id="image-upload-input" type="file" accept=".png,.jpg,.jpeg,.webp" />
+          <button type="button" id="image-upload-button" class="button button-secondary">
+            Upload Image
+          </button>
+        </section>
+
+        <div class="ops-toolbar">
+          <button type="button" data-command="bold">Bold</button>
+          <button type="button" data-command="italic">Italic</button>
+          <button type="button" data-command="linebreak">Line Break</button>
+        </div>
+
+        <form id="ops-form" class="ops-form"></form>
+
+        <div class="ops-actions">
+          <button type="button" id="save-button" class="button button-primary">Save Changes</button>
+          <button type="button" id="reload-button" class="button button-secondary">Reload Saved Copy</button>
+        </div>
+
+        <p id="ops-status" class="ops-status" aria-live="polite"></p>
+      </aside>
+
+      <section class="ops-preview">
+        <div class="ops-preview-head">
+          <p class="eyebrow">Live Preview</p>
+          <p>
+            This is the public homepage rendered with your current draft. Nothing
+            updates on disk until you save.
+          </p>
+        </div>
+        <iframe id="preview-frame" src="../index.html?preview=1" title="Live site preview"></iframe>
+      </section>
+    </div>
+
+    <script>
+      window.SITE_CONFIG = {
+        contentApiPath: "../api/content",
+        contentFilePath: "../content/site-copy.json",
+        previewPath: "../index.html?preview=1"
+      };
+    </script>
+    <script src="../content-editor.js"></script>
+    <script src="ops.js"></script>
+  </body>
+</html>

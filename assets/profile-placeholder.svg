@@ -1,0 +1,28 @@
+<svg width="920" height="1120" viewBox="0 0 920 1120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="920" height="1120" fill="#F5F0E5"/>
+  <rect x="34" y="34" width="852" height="1052" rx="40" fill="#FFF9EE" stroke="#D9CFBE" stroke-width="4"/>
+  <rect x="98" y="98" width="724" height="924" rx="30" fill="url(#surface)"/>
+  <path d="M208 920C208 741.405 352.405 597 531 597H613C791.595 597 936 741.405 936 920V1022H208V920Z" fill="#D1C4AD"/>
+  <path d="M170 930C170 757.446 309.446 618 482 618H610C782.554 618 922 757.446 922 930V1022H170V930Z" fill="#1F3A44"/>
+  <circle cx="461" cy="408" r="188" fill="#D3C7B2"/>
+  <circle cx="461" cy="392" r="160" fill="#E6DCCB"/>
+  <path d="M285 442C314.333 288 400.333 211 543 211C653.383 211 722.667 276 751 406C727.667 348 687.333 319 630 319C543.11 319 495.759 398.596 437 434C383.777 466.079 323.11 468.746 285 442Z" fill="#1B2F37"/>
+  <path d="M337 470C381.667 549.333 443 589 521 589C599 589 658 551 698 475C666.667 511.667 624.333 530 571 530C487.03 530 430.703 484.969 374 463C358.359 456.941 345.308 459.275 337 470Z" fill="#CABCA3"/>
+  <circle cx="252" cy="226" r="34" fill="#B78447"/>
+  <circle cx="728" cy="278" r="20" fill="#1F3A44"/>
+  <circle cx="712" cy="868" r="28" fill="#B78447"/>
+  <path d="M118 772H794" stroke="#D9CFBE" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M118 828H794" stroke="#D9CFBE" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M118 884H794" stroke="#D9CFBE" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M146 138H774" stroke="#D7CCBA" stroke-width="2"/>
+  <path d="M146 156H774" stroke="#D7CCBA" stroke-width="2"/>
+  <text x="144" y="187" fill="#1F3A44" font-family="Georgia, 'Times New Roman', serif" font-size="42" letter-spacing="12">MATTHEW FLOREK</text>
+  <text x="144" y="972" fill="#B78447" font-family="Trebuchet MS, sans-serif" font-size="28" letter-spacing="10">PORTRAIT PLACEHOLDER</text>
+  <text x="144" y="1016" fill="#4D6269" font-family="Trebuchet MS, sans-serif" font-size="26" letter-spacing="4">Replace this SVG with a professional headshot when ready.</text>
+  <defs>
+    <linearGradient id="surface" x1="460" y1="98" x2="460" y2="1022" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF8EC"/>
+      <stop offset="1" stop-color="#EFE5D3"/>
+    </linearGradient>
+  </defs>
+</svg>

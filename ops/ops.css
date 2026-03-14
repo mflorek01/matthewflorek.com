@@ -1,0 +1,209 @@
+.ops-body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(153, 106, 47, 0.18), transparent 24%),
+    linear-gradient(180deg, #e9dfcf 0%, #ddd3c4 100%);
+}
+
+.ops-shell {
+  display: grid;
+  grid-template-columns: minmax(360px, 430px) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.ops-sidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.25rem;
+  background: rgba(250, 245, 236, 0.92);
+  border-right: 1px solid rgba(23, 48, 56, 0.12);
+  box-shadow: 18px 0 38px rgba(23, 48, 56, 0.08);
+}
+
+.ops-sidebar-head h1 {
+  margin: 0;
+  font-family: var(--display-font);
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  line-height: 0.96;
+}
+
+.ops-sidebar-head p:last-child,
+.ops-preview-head p:last-child {
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+.ops-toolbar,
+.ops-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.ops-upload {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(23, 48, 56, 0.1);
+  border-radius: 22px;
+}
+
+.ops-upload-copy,
+.ops-upload-current {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.ops-upload code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+}
+
+#current-image-path {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.ops-toolbar button {
+  min-height: 42px;
+  padding: 0.7rem 0.95rem;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(23, 48, 56, 0.12);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.ops-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-bottom: 1.75rem;
+}
+
+.ops-fieldset {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(23, 48, 56, 0.1);
+  border-radius: 22px;
+}
+
+.ops-fieldset legend {
+  padding: 0 0.35rem;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ops-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.ops-field label {
+  font-weight: 700;
+}
+
+.ops-field input,
+.ops-field textarea,
+.ops-rich-input {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  color: var(--ink);
+  font: inherit;
+  background: rgba(255, 250, 242, 0.98);
+  border: 1px solid rgba(23, 48, 56, 0.14);
+  border-radius: 16px;
+}
+
+.ops-field textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.ops-rich-input {
+  min-height: 110px;
+  line-height: 1.6;
+  outline: none;
+}
+
+.ops-rich-input:focus,
+.ops-field input:focus,
+.ops-field textarea:focus {
+  border-color: rgba(49, 85, 99, 0.45);
+  box-shadow: 0 0 0 4px rgba(49, 85, 99, 0.12);
+}
+
+.ops-help {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.ops-status {
+  min-height: 1.5rem;
+  margin: 1rem 0 0;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.ops-status.is-error {
+  color: #8d2f2f;
+}
+
+.ops-status.is-success {
+  color: #2f6a4b;
+}
+
+.ops-preview {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.ops-preview-head {
+  padding: 1rem 1.2rem;
+  background: rgba(252, 248, 241, 0.86);
+  border: 1px solid rgba(23, 48, 56, 0.1);
+  border-radius: 22px;
+}
+
+.ops-preview iframe {
+  width: 100%;
+  min-height: 0;
+  height: calc(100vh - 8rem);
+  background: #f3efe4;
+  border: 1px solid rgba(23, 48, 56, 0.14);
+  border-radius: 28px;
+}
+
+@media (max-width: 1100px) {
+  .ops-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .ops-sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid rgba(23, 48, 56, 0.12);
+  }
+
+  .ops-preview iframe {
+    height: 70vh;
+  }
+}
