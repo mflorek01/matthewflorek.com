@@ -381,6 +381,8 @@ static void run_tabu_search(const Graph *g, uint64_t seed, double time_limit,
         int fallback_v = -1;      /* best gain ignoring tabu, safety net */
         int64_t fallback_gain = INT64_MIN;
         int fallback_count = 0;
+        uint64_t best_age = 0;     /* tsa: last_flip[] value of the current best (gain,age) pick */
+        int gain_tie_count = 0;    /* tsa: count of eligible candidates tied on gain alone */
 
         for (int v = 0; v < n; v++) {
             int64_t gv = gain[v];
@@ -412,6 +414,26 @@ static void run_tabu_search(const Graph *g, uint64_t seed, double time_limit,
                         if (j < (uint64_t)TS2_TIE_CAP) tied[j] = v;
                     }
                 }
+            } else if (is_tsa) {
+                uint64_t age = last_flip[v];
+                if (gv > best_gain) {
+                    best_gain = gv;
+                    gain_tie_count = 1;
+                    best_age = age;
+                    best_v = v;
+                    reservoir_count = 1;
+                } else if (gv == best_gain) {
+                    gain_tie_count++;
+                    if (age < best_age) {
+                        best_age = age;
+                        best_v = v;
+                        reservoir_count = 1;
+                    } else if (age == best_age) {
+                        reservoir_count++;
+                        if ((uint64_t)rng_below(&rng, (uint64_t)reservoir_count) == 0) best_v = v;
+                    }
+                    /* age > best_age: not among the oldest tied candidates, skip */
+                }
             } else {
                 if (gv > best_gain) {
                     best_gain = gv;
@@ -423,6 +445,8 @@ static void run_tabu_search(const Graph *g, uint64_t seed, double time_limit,
                 }
             }
         }
+
+        if (is_tsa && gain_tie_count > 1) tie_iters++;
 
         if (is_ts2) {
             int buf_n = tie_seen < TS2_TIE_CAP ? tie_seen : TS2_TIE_CAP;
@@ -468,6 +492,7 @@ static void run_tabu_search(const Graph *g, uint64_t seed, double time_limit,
         cur_cut += delta;
         uint64_t tenure = TABU_BASE + rng_below(&rng, TABU_RANGE);
         tabu_until[best_v] = (int64_t)iter + (int64_t)tenure;
+        if (is_tsa) last_flip[best_v] = iter;
 
         if (cur_cut > best_cut) {
             best_cut = cur_cut;
@@ -488,6 +513,7 @@ static void run_tabu_search(const Graph *g, uint64_t seed, double time_limit,
             cur_cut = compute_cut(g, side);
             compute_gain_all(g, side, gain);
             memset(tabu_until, 0, (size_t)n * sizeof(int64_t));
+            if (is_tsa) memset(last_flip, 0, (size_t)n * sizeof(uint64_t));
             last_improve_iter = iter;
         }
     }
@@ -505,6 +531,7 @@ static void run_tabu_search(const Graph *g, uint64_t seed, double time_limit,
     free(side);
     free(gain);
     free(tabu_until);
+    free(last_flip);
     free(spectral_side);
 }
 
@@ -1161,14 +1188,14 @@ int main(int argc, char **argv) {
     }
 
     if (!instance_path) {
-        fprintf(stderr, "usage: %s <instance_path> --algo {ts|ts2|tsf|icm} --seed <int> --time <seconds> --init {random|spectral}\n", argv[0]);
+        fprintf(stderr, "usage: %s <instance_path> --algo {ts|ts2|tsf|icm|tsa} --seed <int> --time <seconds> --init {random|spectral}\n", argv[0]);
         fprintf(stderr, "       %s --selftest\n", argv[0]);
         return 2;
     }
 
     if (strcmp(algo, "ts") != 0 && strcmp(algo, "ts2") != 0 &&
-        strcmp(algo, "tsf") != 0 && strcmp(algo, "icm") != 0) {
-        fprintf(stderr, "error: unsupported algo '%s' (supported: ts, ts2, tsf, icm)\n", algo);
+        strcmp(algo, "tsf") != 0 && strcmp(algo, "icm") != 0 && strcmp(algo, "tsa") != 0) {
+        fprintf(stderr, "error: unsupported algo '%s' (supported: ts, ts2, tsf, icm, tsa)\n", algo);
         return 2;
     }
 
