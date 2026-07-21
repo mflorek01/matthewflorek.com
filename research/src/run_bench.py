@@ -49,7 +49,11 @@ def parse_args():
 def run_one(binary, instances_dir, instance, algo, seed, time_limit):
     """Run a single (instance, algo, seed) combo. Returns a dict result."""
     path = os.path.join(instances_dir, instance)
-    cmd = [binary, path, "--algo", algo, "--seed", str(seed), "--time", str(time_limit)]
+    # algo spec "name@init" maps to --algo name --init init (e.g. ts@spectral)
+    algo_name, _, init_mode = algo.partition("@")
+    cmd = [binary, path, "--algo", algo_name, "--seed", str(seed), "--time", str(time_limit)]
+    if init_mode:
+        cmd += ["--init", init_mode]
     t0 = time.time()
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=time_limit + 60)
@@ -81,7 +85,11 @@ def run_one(binary, instances_dir, instance, algo, seed, time_limit):
                 "error": f"no JSON output; stdout={proc.stdout.strip()[:500]} stderr={proc.stderr.strip()[:500]}",
                 "wall": time.time() - t0}
 
-    return {"ok": True, "line": line, "record": json.loads(line)}
+    record = json.loads(line)
+    if init_mode:  # keep ts and ts@spectral distinct in grouping/summary
+        record["algo"] = algo
+        line = json.dumps(record)
+    return {"ok": True, "line": line, "record": record}
 
 
 def main():

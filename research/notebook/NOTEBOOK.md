@@ -77,6 +77,22 @@ at all is respectable, beating time-to-target of tabu search is a realistic win.
   (10k flips, incremental vs recomputed cut agree; gains brute-force checked);
   G1 seed1/10s → 11624 (= best-known); G11 seed1/5s → 560/564.
   Throughput ~580K iters/s (G11, deg≈4), ~430K iters/s (G1, deg≈48).
+- **Results:** PASS. All 95 runs verified:true. 30 s × 5 seeds:
+  best-known MATCHED on G1, G6, G11, G18, G43, G47, G50 (8/19). Gaps:
+  toroidal n=800 ≤0.7%; toroidal n=2000 (G32/33/34) 1.0–1.4%; G36 1.6%;
+  **G39 5.6% (outlier)**; G55 3.1%; G63 1.8%; dense random all 0%.
+- **Conclusions:** Baseline is publication-credible for A/B work. Weakness
+  concentrated on (a) tie-degenerate toroidal graphs, (b) large sparse
+  graphs, (c) G39-type almost-planar ±1 — restarts appear too destructive
+  there (hypothesis: best-quality basins need longer convergence than the
+  300k-iteration stagnation window allows). These are the target instances
+  for H3/H4/H6.
+
+### EXP-004: ts vs ts2 head-to-head (H3)
+- **Status:** running (~65 min)
+- **Setup:** maxcut2 binary, 13 instances (6 toroidal, G36/G39 weak,
+  G22/G27/G43 control, G55/G63 large), 10 seeds, 60 s, 4 jobs.
+  Paired-by-seed analysis planned; Wilcoxon if unclear.
 - **Results:** (pending)
 
 ### EXP-002: ts2 (H3 tie-breaking) + spectral init (H2) — implementation
