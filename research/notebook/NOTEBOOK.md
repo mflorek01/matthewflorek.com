@@ -166,7 +166,17 @@ at all is respectable, beating time-to-target of tabu search is a realistic win.
 - **Setup:** {G22,G27,G43,G47}, ts vs tsa, seeds 11–20 (untouched), 60 s.
   Pre-registered prediction: if the G22 effect is real, tsa ≥ ts on G22/G27
   with p<0.05; G43/G47 likely ceiling-saturated (both hit 6660/6657 easily).
-- **Results:** (pending)
+- **Results:** DONE, 80/80 verified. **G22 effect REPLICATED as pre-registered:**
+  G22 +11.3 (8/0/2, p=0.014), G27 +12.3 (10/0/0, p=0.002). Twist: G43 −0.6
+  (p=0.03), G47 −1.4 (0/2/8, p=0.008) — significantly worse where ts already
+  saturates at best-known instantly.
+- **Conclusions:** Age-based tie-breaking is a real, replicated improvement on
+  *hard* dense random instances (~+12 mean on both n=2000 dense graphs,
+  independent seed sets), while mildly harmful on ceiling-saturated easy
+  instances and flat on toroidals. Mechanism (proposed): the age sweep acts
+  as slow systematic diversification — valuable when the landscape has many
+  mediocre optima to escape, damaging when the endgame needs pure
+  intensification.
 
 ### EXP-002: ts2 (H3 tie-breaking) + spectral init (H2) — implementation
 - **Status:** implemented & verified (maxcut2.c). Benchmark pending.
@@ -253,3 +263,44 @@ periodically, take difference set D = {v : s¹_v ≠ s²_v} (after alignment),
 pick random connected component C of G[D], flip C in both replicas (sum of
 cuts preserved). Rarely used inside tabu frameworks on G-set — test whether
 it beats independent restarts at equal wall-clock.
+
+---
+
+## 7. Final synthesis (2026-07-21)
+
+**Validated positive findings (all paired, 10 seeds, self-verified runs):**
+1. **Spectral initialization** (power iteration, ~ms cost): worth >12×
+   wall-clock on large sparse (G55, G63) and almost-planar (G36, G39)
+   instances; effect persists at 60 s. These instances are
+   *initialization-limited*, not search-limited — explains the G39
+   calibration anomaly. (EXP-005, EXP-006)
+2. **Isoenergetic cluster moves** inside tabu search: significant gains on
+   toroidal family (plateau traversal via ~90-vertex non-local moves).
+   (EXP-006)
+3. **Composition:** icm@spectral significantly beats baseline ts on 6/8
+   benchmark instances at equal wall-clock, and beats each component alone
+   on G32/G33 — the two mechanisms address orthogonal failure modes.
+   (EXP-006)
+4. **Age-based tie-breaking**: replicated ~+12 mean improvement on hard
+   dense random instances (G22, G27; p≤0.014 on fresh seeds). (EXP-007/008)
+
+**Validated negative findings:**
+5. On plateau-degenerate toroidal graphs (>99.9% of moves gain-tied),
+   *no* informed tie-breaking tested (greedy 1-step lookahead, age) beats
+   uniform random — replicated across EXP-004/007. Random plateau diffusion
+   is genuinely load-bearing.
+6. Spectral init hurts small toroidal (G11); icm without good init hurts
+   G39; tsf (consensus freezing) works but is dominated by spectral
+   variants; age tie-breaking hurts ceiling-saturated instances.
+
+**Proposed method (future work — untested as a unit):** dispatch portfolio:
+spectral init iff n≥2000 and sparse/planar-like; ICM replicas always except
+tiny-dense; age tie-breaking iff dense and unsaturated; else plain ts.
+Natural next experiment: composite end-to-end + 20-instance held-out G-set
+sweep (~2 h CPU, one small code change putting tsa tie-breaking inside icm).
+
+**Threats to validity (recorded honestly):** single machine, 4-way CPU
+contention during runs (uniform across arms, so paired comparisons stand);
+60 s budgets (published records use hours–days); best-known table used only
+for calibration, never for A/B claims; multiple-comparison exposure managed
+via replication on fresh seeds rather than corrections.
