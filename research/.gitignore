@@ -1,2 +1,4 @@
 src/maxcut
+src/maxcut2
+src/maxcut3
 src/*.o
