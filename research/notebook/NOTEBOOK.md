@@ -80,11 +80,27 @@ at all is respectable, beating time-to-target of tabu search is a realistic win.
 - **Results:** (pending)
 
 ### EXP-002: ts2 (H3 tie-breaking) + spectral init (H2) — implementation
-- **Status:** implementation delegated (maxcut2.c, binary maxcut2)
+- **Status:** implemented & verified (maxcut2.c). Benchmark pending.
 - ts2 = identical to ts except gain-ties broken by score2 = Σ max(0, post-flip
   neighbor gain); spectral init = power iteration on cI−W, sign rounding,
-  10% random flips at restarts. JSON gains fields: tie_iters, score2_evals,
+  10% random flips at restarts. New JSON fields: tie_iters, score2_evals,
   init_cut.
+- **Implementation findings:** ts path in maxcut2 bit-identical to baseline
+  (G1 seed7: 11606 == 11606). On G11, 99.98% of iterations have >1 gain-tied
+  candidate — tie degeneracy on toroidal ±1 graphs is near-total, so
+  tie-breaking policy is effectively THE move-selection policy there. ts2
+  overhead ~19% iters/s. Spectral init_cut on G14: 2668 vs 2410 random (+11%);
+  on G11 init_cut 502 (best-known 564). Correct post-flip sign rule: neighbor u
+  same side as v pre-flip → gain[u] −= 2w after v flips; opposite → += 2w.
+- **Results:** (pending benchmark)
+
+### EXP-003: tsf (H4 consensus freezing) + icm (H6 cluster moves) — implementation
+- **Status:** implementation delegated (maxcut3.c)
+- tsf: elite pool K=8 at stagnation events, flip-symmetry alignment, freeze
+  unanimous vertices, restart from newest elite + 25% flips of non-frozen;
+  every 3rd event full unfreeze+random restart. icm: 2 interleaved ts replicas,
+  every 20k iters flip a random connected component of the aligned difference
+  set in both replicas (preserves cut sum); tabu reset on moved vertices.
 - **Results:** (pending)
 
 ## 5. Calibration data: best-known values (literature)
