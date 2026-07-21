@@ -89,10 +89,43 @@ at all is respectable, beating time-to-target of tabu search is a realistic win.
   for H3/H4/H6.
 
 ### EXP-004: ts vs ts2 head-to-head (H3)
-- **Status:** running (~65 min)
-- **Setup:** maxcut2 binary, 13 instances (6 toroidal, G36/G39 weak,
-  G22/G27/G43 control, G55/G63 large), 10 seeds, 60 s, 4 jobs.
-  Paired-by-seed analysis planned; Wilcoxon if unclear.
+- **Status:** DONE — **H3 FALSIFIED (useful negative result)**
+- **Setup:** maxcut2 binary, 13 instances, 10 seeds, 60 s, paired by seed.
+  260/260 runs verified.
+- **Results:** No instance shows a significant ts2 win (all Wilcoxon p≥0.09).
+  Trend NEGATIVE on toroidal n=2000: G32 mean −3.8 (p=0.11), G33 −1.4
+  (p=0.09). Flat elsewhere (G43 all-ties at 6660; G63 +8.2 p=0.26 n.s.).
+- **Conclusions:** Even though >99.9% of moves are gain-tied on toroidal
+  graphs, greedy 1-step-lookahead tie-breaking does NOT help and trends
+  harmful: it biases plateau walks and cuts throughput ~19%. Random
+  tie-breaking is doing genuine diversification work. → New hypothesis
+  **H3b**: age-based (least-recently-flipped) tie-breaking, the SAT
+  novelty-style mechanism, near-zero overhead ("tsa", EXP-007).
+
+### EXP-005: spectral init at 5 s budget (H2)
+- **Status:** DONE — **H2 CONFIRMED, effect much larger than hypothesized**
+- **Setup:** ts vs ts@spectral, 7 instances, 10 seeds, 5 s. 140/140 verified.
+- **Results (mean over 10 seeds):**
+  G55 10080 vs 9926 (+154); G63 26576 vs 26496 (+80); G39 2282 vs 2218
+  (+63); G36 7552 vs 7535 (+17); G27 +11; G22 +6; G14 −1.
+  **Spectral@5s beats random@60s** (EXP-004 ts means) on G55 (10080>9957),
+  G63 (26576>26549), G39 (2282>2264): a >12× wall-clock equivalent.
+- **Conclusions:** On large sparse (G55,G63) and almost-planar ±1 (G36,G39)
+  instances, tabu search's weakness is dominated by the initial basin, not
+  by search dynamics: power iteration (~ms) drops the search into a far
+  better basin than 60 s of restarts finds. Explains the G39 calibration
+  outlier. No effect on dense random / small toroidal (search-limited, not
+  init-limited). Follow-up in EXP-006: does the advantage persist at 60 s,
+  and does it compose with icm?
+
+### EXP-006: ts vs ts@spectral vs tsf vs icm vs icm@spectral, 60 s (H2/H4/H6)
+- **Status:** running (~100 min)
+- **Setup:** maxcut3 binary, {G11,G22,G32,G33,G36,G39,G55,G63}, 10 seeds,
+  60 s, 4 jobs → 400 runs.
+- **Results:** (pending)
+
+### EXP-007: tsa age tie-breaking (H3b) — implementation
+- **Status:** delegated (maxcut4.c)
 - **Results:** (pending)
 
 ### EXP-002: ts2 (H3 tie-breaking) + spectral init (H2) — implementation
