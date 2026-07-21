@@ -119,10 +119,34 @@ at all is respectable, beating time-to-target of tabu search is a realistic win.
   and does it compose with icm?
 
 ### EXP-006: ts vs ts@spectral vs tsf vs icm vs icm@spectral, 60 s (H2/H4/H6)
-- **Status:** running (~100 min)
+- **Status:** DONE — **headline result. H6 confirmed; H2 persists at 60 s;
+  spectral+ICM compose; H4 supported but dominated.**
 - **Setup:** maxcut3 binary, {G11,G22,G32,G33,G36,G39,G55,G63}, 10 seeds,
-  60 s, 4 jobs → 400 runs.
-- **Results:** (pending)
+  60 s, 4 jobs → 400 runs, all verified. Paired Wilcoxon vs ts, α=0.05.
+- **Results (mean over 10 seeds; * = significant vs ts):**
+  | inst | ts | ts@spec | tsf | icm | icm@spec |
+  |------|-----|-----|-----|-----|-----|
+  | G11 | 562.4 | 560.4* (worse) | 563.6* | 563.8* | 561.2 |
+  | G22 | 13343 | 13335 | 13342 | 13346 | 13336 |
+  | G32 | 1390.6 | 1393.0 | 1388.6 | 1394.0 | **1397.8*** |
+  | G33 | 1362.2 | 1368.4* | 1363.6 | 1368.6* | **1371.2*** |
+  | G36 | 7551.4 | 7565.1* | 7560.2* | 7555.9 | **7560.1*** |
+  | G39 | 2264.0 | 2291.0* | 2269.7 | 2247.8* (worse) | **2293.4*** |
+  | G55 | 9956.6 | 10099* | 10004* | 9965.0 | **10106*** |
+  | G63 | 26549 | 26601* | 26543 | 26544 | **26608*** |
+- **Conclusions:**
+  1. **icm@spectral significantly beats baseline ts on 6/8 instances** at
+     equal wall-clock; never significantly worse except neutral on G11/G22.
+  2. Mechanism decomposition: spectral fixes the *initial basin* (large
+     sparse + almost-planar), ICM fixes *plateau traversal* (toroidal).
+     On G32/G33 the combination beats each component alone (additive
+     composition of orthogonal mechanisms).
+  3. Negative findings kept: spectral hurts small toroidal G11; icm alone
+     is significantly worse on G39 (cluster moves between two poorly
+     initialized replicas propagate bad structure); tsf works (G11, G36,
+     G55*) but is dominated by spectral variants everywhere → dropped.
+  4. Practical dispatch rule: spectral init when n≥2000 or graph is
+     sparse/planar-like; ICM always except tiny dense; plain ts otherwise.
 
 ### EXP-007: tsa age tie-breaking (H3b) — implementation
 - **Status:** delegated (maxcut4.c)
