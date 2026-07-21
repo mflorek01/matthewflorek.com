@@ -117,7 +117,12 @@ at all is respectable, beating time-to-target of tabu search is a realistic win.
   every 3rd event full unfreeze+random restart. icm: 2 interleaved ts replicas,
   every 20k iters flip a random connected component of the aligned difference
   set in both replicas (preserves cut sum); tabu reset on moved vertices.
-- **Results:** (pending)
+- **Results:** implemented & verified (maxcut3.c). Selftest PASS; isoenergetic
+  sum-preservation held empirically on recomputed cuts for first 10 cluster
+  moves. Smoke (10 s, G11, under CPU contention): tsf 562 (25 events, 57% of
+  vertices frozen); **icm 564 = best-known**, ~143 cluster moves, avg cluster
+  size ≈ 91 vertices — moves are strongly non-local. Anecdotal; EXP-006 will
+  benchmark properly.
 
 ## 5. Calibration data: best-known values (literature)
 

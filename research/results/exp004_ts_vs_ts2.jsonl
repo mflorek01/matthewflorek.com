@@ -1,0 +1,4 @@
+{"instance": "G11", "algo": "ts", "seed": 2, "init": "random", "n": 800, "m": 1600, "best": 562, "init_cut": 36, "time_to_best": 17.994, "total_time": 60.001, "iters": 24654848, "tie_iters": 0, "score2_evals": 0, "verified": true}
+{"instance": "G11", "algo": "ts", "seed": 1, "init": "random", "n": 800, "m": 1600, "best": 562, "init_cut": 30, "time_to_best": 59.442, "total_time": 60.001, "iters": 24615936, "tie_iters": 0, "score2_evals": 0, "verified": true}
+{"instance": "G11", "algo": "ts", "seed": 3, "init": "random", "n": 800, "m": 1600, "best": 562, "init_cut": 30, "time_to_best": 13.709, "total_time": 60.000, "iters": 24845824, "tie_iters": 0, "score2_evals": 0, "verified": true}
+{"instance": "G11", "algo": "ts", "seed": 4, "init": "random", "n": 800, "m": 1600, "best": 564, "init_cut": 12, "time_to_best": 19.097, "total_time": 60.000, "iters": 25297408, "tie_iters": 0, "score2_evals": 0, "verified": true}
