@@ -148,8 +148,24 @@ at all is respectable, beating time-to-target of tabu search is a realistic win.
   4. Practical dispatch rule: spectral init when n≥2000 or graph is
      sparse/planar-like; ICM always except tiny dense; plain ts otherwise.
 
-### EXP-007: tsa age tie-breaking (H3b) — implementation
-- **Status:** delegated (maxcut4.c)
+### EXP-007: tsa age tie-breaking (H3b), 60 s
+- **Status:** DONE — **H3b falsified on target family; unexpected dense-graph
+  signal → EXP-008**
+- **Setup:** maxcut4, {G11,G32,G33,G22}, 10 seeds, 60 s; paired vs EXP-006 ts
+  (same conditions). 40/40 verified.
+- **Results:** toroidal flat: G11 +0.2 (p=1.0), G32 −1.0 (p=0.60), G33 +1.6
+  (p=0.25). **G22 +12.4 mean, 7/0/3, p=0.025.**
+- **Conclusions:** Combined with EXP-004: on plateau-degenerate toroidal
+  graphs, NO informed tie-breaking (greedy lookahead or age) beats uniform
+  random — replicated negative result; plateau diffusion appears optimal
+  among tested policies. The G22 win is a single p=0.025 among 4 tests
+  (Bonferroni-marginal) — treated as unconfirmed until replicated.
+
+### EXP-008: tsa replication on dense random, fresh seeds
+- **Status:** running (~20 min)
+- **Setup:** {G22,G27,G43,G47}, ts vs tsa, seeds 11–20 (untouched), 60 s.
+  Pre-registered prediction: if the G22 effect is real, tsa ≥ ts on G22/G27
+  with p<0.05; G43/G47 likely ceiling-saturated (both hit 6660/6657 easily).
 - **Results:** (pending)
 
 ### EXP-002: ts2 (H3 tie-breaking) + spectral init (H2) — implementation
