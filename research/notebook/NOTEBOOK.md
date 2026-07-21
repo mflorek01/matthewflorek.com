@@ -69,10 +69,22 @@ at all is respectable, beating time-to-target of tabu search is a realistic win.
 ## 4. Experiment log
 
 ### EXP-001: Baseline tabu search calibration
-- **Status:** running (implementation delegated to coding agent)
-- **Setup:** ts on {G1,G6,G11,G14,G18,G22,G27,G32,G36,G39,G43,G47,G50,G55,G63},
-  10 seeds × 60 s planned; first smoke: fewer seeds/shorter.
+- **Status:** running
+- **Setup:** ts on 19 instances (incl. toroidals G12,G13,G33,G34), 5 seeds × 30 s,
+  4 parallel jobs. Output: results/exp001_calibration.jsonl.
 - **Hypothesis:** H1.
+- **Implementation notes:** baseline verified by coding agent: selftest PASS
+  (10k flips, incremental vs recomputed cut agree; gains brute-force checked);
+  G1 seed1/10s → 11624 (= best-known); G11 seed1/5s → 560/564.
+  Throughput ~580K iters/s (G11, deg≈4), ~430K iters/s (G1, deg≈48).
+- **Results:** (pending)
+
+### EXP-002: ts2 (H3 tie-breaking) + spectral init (H2) — implementation
+- **Status:** implementation delegated (maxcut2.c, binary maxcut2)
+- ts2 = identical to ts except gain-ties broken by score2 = Σ max(0, post-flip
+  neighbor gain); spectral init = power iteration on cI−W, sign rounding,
+  10% random flips at restarts. JSON gains fields: tie_iters, score2_evals,
+  init_cut.
 - **Results:** (pending)
 
 ## 5. Calibration data: best-known values (literature)

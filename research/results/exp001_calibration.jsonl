@@ -1,0 +1,8 @@
+{"instance": "G1", "algo": "ts", "seed": 2, "n": 800, "m": 19176, "best": 11624, "time_to_best": 1.636, "total_time": 30.000, "iters": 13100032, "verified": true}
+{"instance": "G1", "algo": "ts", "seed": 1, "n": 800, "m": 19176, "best": 11624, "time_to_best": 1.311, "total_time": 30.000, "iters": 12782592, "verified": true}
+{"instance": "G1", "algo": "ts", "seed": 3, "n": 800, "m": 19176, "best": 11624, "time_to_best": 0.019, "total_time": 30.001, "iters": 12985856, "verified": true}
+{"instance": "G1", "algo": "ts", "seed": 4, "n": 800, "m": 19176, "best": 11624, "time_to_best": 0.729, "total_time": 30.001, "iters": 14199808, "verified": true}
+{"instance": "G1", "algo": "ts", "seed": 5, "n": 800, "m": 19176, "best": 11624, "time_to_best": 0.189, "total_time": 30.000, "iters": 12209152, "verified": true}
+{"instance": "G6", "algo": "ts", "seed": 2, "n": 800, "m": 19176, "best": 2178, "time_to_best": 2.666, "total_time": 30.001, "iters": 14177280, "verified": true}
+{"instance": "G6", "algo": "ts", "seed": 1, "n": 800, "m": 19176, "best": 2178, "time_to_best": 6.743, "total_time": 30.001, "iters": 14235136, "verified": true}
+{"instance": "G6", "algo": "ts", "seed": 3, "n": 800, "m": 19176, "best": 2178, "time_to_best": 9.736, "total_time": 30.001, "iters": 13185024, "verified": true}
