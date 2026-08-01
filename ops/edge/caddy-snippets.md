@@ -65,13 +65,13 @@ www.matthewflorek.com {
 The redirect is intentionally separate from the application route. It keeps a
 single canonical origin for analytics, search indexing, and shared links.
 
-## Optional Umami route
+## Required public Umami tracker route
 
-Only add this block after Umami is running and its dashboard account has been
-created. The Umami host is separate from the portfolio app. If the dashboard
-is published through the Docker Caddy, attach Caddy to the externally named
-`portfolio_umami_private` network and verify that the service alias `umami`
-resolves from the Caddy container.
+Add this block after Umami is running and its dashboard account has been
+created. The tracker script and collection endpoint must be reachable by
+visitors, but the dashboard does not need to be public. Attach Caddy to the
+externally named `portfolio_umami_private` network and verify that the service
+alias `umami` resolves from the Caddy container.
 
 ```caddyfile
 analytics.matthewflorek.com {
@@ -85,14 +85,22 @@ analytics.matthewflorek.com {
         X-Frame-Options "DENY"
     }
     request_body {
-        max_size 2MB
+        max_size 64KB
     }
-    reverse_proxy umami:3000
+
+    # Publish only the browser tracker and its collection endpoint. Keep the
+    # dashboard and administrative API available through an SSH tunnel.
+    @umami_tracker path /script.js /api/send
+    handle @umami_tracker {
+        reverse_proxy umami:3000
+    }
+    respond 404
 }
 ```
 
-If the analytics dashboard is not needed publicly, omit this block and access
-Umami through an operator-controlled tunnel or local port-forward instead.
+Access the dashboard through an operator-controlled tunnel or local
+port-forward. Publishing the full dashboard requires a separate, explicit
+security decision and is not part of the launch configuration.
 
 ## Optional staging route
 
