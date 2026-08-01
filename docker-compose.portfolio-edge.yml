@@ -1,0 +1,14 @@
+services:
+  caddy:
+    networks:
+      - default
+      - portfolio_private
+      - portfolio_umami_private
+
+networks:
+  portfolio_private:
+    external: true
+    name: portfolio_private
+  portfolio_umami_private:
+    external: true
+    name: portfolio_umami_private

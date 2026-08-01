@@ -1,0 +1,61 @@
+# BEGIN Matthew Florek portfolio managed block
+matthewflorek.com {
+    encode zstd gzip
+
+    header {
+        Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' https://analytics.matthewflorek.com; connect-src 'self' https://analytics.matthewflorek.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data: https:; frame-src 'none'"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+    }
+
+    request_body {
+        max_size 2MB
+    }
+    @portfolio_login path /api/auth/login
+    @portfolio_chat path /api/chat
+    @portfolio_integration path /api/admin/integrations/metamorphysis /api/admin/integrations/metamorphysis/*
+    @portfolio_upload path_regexp portfolio_upload ^/api/admin/projects/[^/]+/assets$
+    request_body @portfolio_login {
+        max_size 32KB
+    }
+    request_body @portfolio_chat {
+        max_size 64KB
+    }
+    request_body @portfolio_integration {
+        max_size 256KB
+    }
+    request_body @portfolio_upload {
+        max_size 12MB
+    }
+
+    reverse_proxy portfolio:3000
+}
+
+www.matthewflorek.com {
+    redir https://matthewflorek.com{uri} permanent
+}
+
+analytics.matthewflorek.com {
+    encode zstd gzip
+    header {
+        Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'none'"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+    }
+    request_body {
+        max_size 64KB
+    }
+
+    @umami_tracker path /script.js /api/send
+    handle @umami_tracker {
+        reverse_proxy umami:3000
+    }
+    respond 404
+}
+# END Matthew Florek portfolio managed block
