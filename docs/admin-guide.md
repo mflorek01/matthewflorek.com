@@ -23,3 +23,5 @@ Avoid decorative mini-headers, green status indicators, and unnecessary project-
 ## Live analytics
 
 After signing in, choose **Analytics** in the top navigation or **View live analytics** on the workspace home. It shows aggregated Umami counts for the last 30 days, including visitors, visits, pageviews, active visitors, bounce rate, average visit duration, popular pages, referrers, and tracked events. It is intentionally not a list of individual visitors. If it says analytics is unavailable, the server-only Umami settings have not been filled in or the private network is not connected.
+
+For the one-time credential connection, run `bash scripts/admin/configure-analytics-access.sh` from the portfolio folder on the server. Enter the existing Umami username and password when prompted. The password is hidden while you type; the helper validates it, updates the private environment file, and restarts only the portfolio app.
