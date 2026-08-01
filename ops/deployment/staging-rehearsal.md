@@ -25,7 +25,7 @@ production database or live Caddy route is used for this rehearsal.
       integration tokens.
 - [ ] Disable Metamorphysis sync, public AI, and production analytics unless
       the test explicitly requires them and their test credentials are isolated.
-- [ ] Set `NEXT_PUBLIC_ANALYTICS_MODE=consent` for the consent test; do not
+- [ ] Set `ANALYTICS_MODE=consent` for the consent test; do not
       use an unrecognized value as a substitute for an explicit mode.
 - [ ] Run Prisma generation and migrations against the disposable database.
 - [ ] Seed only approved fixture data; do not copy private production content.

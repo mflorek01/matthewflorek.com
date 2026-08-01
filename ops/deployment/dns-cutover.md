@@ -10,7 +10,7 @@ authoritative provider must perform the records change.
 | --- | --- | --- | --- |
 | `matthewflorek.com` | A | `167.233.24.214` | Portfolio origin |
 | `www.matthewflorek.com` | CNAME or provider redirect | Canonical root | Canonical redirect |
-| `analytics.matthewflorek.com` | A | `167.233.24.214` | Optional Umami dashboard |
+| `analytics.matthewflorek.com` | A | `167.233.24.214` | Public Umami tracker endpoints; dashboard remains private |
 | `staging.matthewflorek.com` | A | `167.233.24.214` | Optional, temporary, authenticated staging |
 
 Use the provider's existing IPv6 policy consistently. Do not add an AAAA

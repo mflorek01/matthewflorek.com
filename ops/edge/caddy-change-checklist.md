@@ -59,8 +59,8 @@ prepare and review the change, but it must not bypass the root-owned boundary.
       and integration paths. If an approved edge limiter exists, verify 429
       and Retry-After behavior; otherwise record that Caddy is enforcing body
       limits while the application owns rate limiting.
-- [ ] If Umami was enabled, confirm the dashboard route and tracker endpoint
-      work without changing the portfolio route.
+- [ ] If Umami was enabled, confirm `/script.js` and `/api/send` work while
+      the dashboard and administrative API remain unavailable publicly.
 
 ## Rollback
 

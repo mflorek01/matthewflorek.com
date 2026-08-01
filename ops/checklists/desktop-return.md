@@ -23,9 +23,10 @@ without these values; production cutover cannot.
 - [ ] A unique Umami PostgreSQL password and `UMAMI_APP_SECRET`, if analytics
       dashboard hosting is enabled.
 - [ ] The Umami website ID and public script URL after the site is registered.
-- [ ] Choose `NEXT_PUBLIC_ANALYTICS_MODE`: `off`, `cookieless`, or
-      `consent`. Leave it `off` until the selected behavior has been verified;
-      an unrecognized value is fail-closed.
+- [ ] Choose `ANALYTICS_MODE`: `off`, `cookieless`, or `consent`. Leave it
+      `off` until the selected behavior has been verified; an unrecognized
+      value is fail-closed. The legacy `NEXT_PUBLIC_*` values are fallback
+      compatibility settings, not the preferred runtime controls.
 - [ ] `BACKUP_ROOT`, an explicit absolute path outside the repository.
 - [ ] `PORTFOLIO_HOST_PORT`, retaining a free loopback port such as `3101`.
 - [ ] Any approved Metamorphysis server-to-server token and endpoint, only when
@@ -42,8 +43,8 @@ commits, chat transcripts, or public `.env.example` files.
 - [ ] Current authoritative records and TTLs for the root and `www` names.
 - [ ] Whether `www` will be a CNAME, provider redirect, or A record; the final
       choice must match the Caddy redirect plan.
-- [ ] Whether `analytics.matthewflorek.com` is wanted publicly or should remain
-      operator-only.
+- [ ] Confirm that `analytics.matthewflorek.com` publishes only `/script.js`
+      and `/api/send`; keep the dashboard operator-only through an SSH tunnel.
 - [ ] A quarterly Umami retention-review owner and evidence location. Retention
       is manual in this release; no scheduled deletion job is installed.
 - [ ] Whether staging will remain loopback-only; public staging requires a
