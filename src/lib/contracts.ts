@@ -18,7 +18,8 @@ export const envSchema = z.object({
   ENABLE_METAMORPHYSIS_SYNC: booleanFromEnv,
   ENABLE_AI_FEATURES: booleanFromEnv,
   ENABLE_UMAMI: booleanFromEnv,
-  NEXT_PUBLIC_ANALYTICS_MODE: z.enum(['off', 'cookieless', 'consent']).default('off'),
+  ANALYTICS_MODE: z.enum(['off', 'cookieless', 'consent']).optional(),
+  NEXT_PUBLIC_ANALYTICS_MODE: z.enum(['off', 'cookieless', 'consent']).optional(),
   PUBLIC_CONTENT_MODE: z.enum(['static', 'database']).default('static'),
   CMS_BASE_URL: optionalUrl,
   CMS_API_TOKEN: optionalString,
@@ -26,8 +27,11 @@ export const envSchema = z.object({
   METAMORPHYSIS_SYNC_TOKEN: optionalString,
   OPENAI_API_KEY: optionalString,
   OPENAI_MODEL: z.string().trim().min(1).default('gpt-5-mini'),
+  UMAMI_WEBSITE_ID: optionalString,
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: optionalString,
+  UMAMI_SCRIPT_URL: optionalUrl,
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: optionalUrl,
+  UMAMI_DOMAINS: optionalString,
   NEXT_PUBLIC_UMAMI_DOMAINS: optionalString
 }).superRefine((value, ctx) => {
   if (value.NODE_ENV === 'production' && !value.DATABASE_URL) {
@@ -69,11 +73,19 @@ export const envSchema = z.object({
   }
 
   if (value.ENABLE_UMAMI) {
-    if (!value.NEXT_PUBLIC_UMAMI_WEBSITE_ID) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'NEXT_PUBLIC_UMAMI_WEBSITE_ID is required when ENABLE_UMAMI=true', path: ['NEXT_PUBLIC_UMAMI_WEBSITE_ID'] });
+    if (!value.UMAMI_WEBSITE_ID && !value.NEXT_PUBLIC_UMAMI_WEBSITE_ID) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'UMAMI_WEBSITE_ID is required when ENABLE_UMAMI=true',
+        path: ['UMAMI_WEBSITE_ID']
+      });
     }
-    if (!value.NEXT_PUBLIC_UMAMI_SCRIPT_URL) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'NEXT_PUBLIC_UMAMI_SCRIPT_URL is required when ENABLE_UMAMI=true', path: ['NEXT_PUBLIC_UMAMI_SCRIPT_URL'] });
+    if (!value.UMAMI_SCRIPT_URL && !value.NEXT_PUBLIC_UMAMI_SCRIPT_URL) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'UMAMI_SCRIPT_URL is required when ENABLE_UMAMI=true',
+        path: ['UMAMI_SCRIPT_URL']
+      });
     }
   }
 });

@@ -38,16 +38,18 @@ describe('env', () => {
     vi.stubEnv('NODE_ENV', 'test');
     vi.stubEnv('AUTH_SESSION_SECRET', 'a'.repeat(32));
     vi.stubEnv('OPENAI_MODEL', 'gpt-test');
-    vi.stubEnv('NEXT_PUBLIC_UMAMI_WEBSITE_ID', 'portfolio-site');
-    vi.stubEnv('NEXT_PUBLIC_UMAMI_SCRIPT_URL', 'https://analytics.example.com/script.js');
-    vi.stubEnv('NEXT_PUBLIC_UMAMI_DOMAINS', 'matthewflorek.com');
+    vi.stubEnv('ANALYTICS_MODE', 'cookieless');
+    vi.stubEnv('UMAMI_WEBSITE_ID', 'portfolio-site');
+    vi.stubEnv('UMAMI_SCRIPT_URL', 'https://analytics.example.com/script.js');
+    vi.stubEnv('UMAMI_DOMAINS', 'matthewflorek.com');
     const { loadEnv } = await import('../src/lib/env');
     expect(loadEnv()).toMatchObject({
       AUTH_SESSION_SECRET: 'a'.repeat(32),
       OPENAI_MODEL: 'gpt-test',
-      NEXT_PUBLIC_UMAMI_WEBSITE_ID: 'portfolio-site',
-      NEXT_PUBLIC_UMAMI_SCRIPT_URL: 'https://analytics.example.com/script.js',
-      NEXT_PUBLIC_UMAMI_DOMAINS: 'matthewflorek.com'
+      ANALYTICS_MODE: 'cookieless',
+      UMAMI_WEBSITE_ID: 'portfolio-site',
+      UMAMI_SCRIPT_URL: 'https://analytics.example.com/script.js',
+      UMAMI_DOMAINS: 'matthewflorek.com'
     });
   });
 
@@ -55,6 +57,6 @@ describe('env', () => {
     vi.stubEnv('NODE_ENV', 'test');
     vi.stubEnv('ENABLE_UMAMI', 'true');
     const { loadEnv } = await import('../src/lib/env');
-    expect(() => loadEnv()).toThrowError(/NEXT_PUBLIC_UMAMI_WEBSITE_ID is required/);
+    expect(() => loadEnv()).toThrowError(/UMAMI_WEBSITE_ID is required/);
   });
 });

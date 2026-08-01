@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   getAnalyticsConfig,
   getAnalyticsMode,
@@ -8,6 +8,66 @@ import {
 } from '../src/lib/analytics/config';
 
 describe('analytics configuration', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+
+  it('reads runtime analytics config from server env', () => {
+    vi.stubEnv('ANALYTICS_MODE', 'consent');
+    vi.stubEnv('UMAMI_SCRIPT_URL', 'https://analytics.example.com/script.js');
+    vi.stubEnv('UMAMI_WEBSITE_ID', 'site-id');
+    vi.stubEnv('UMAMI_DOMAINS', 'matthewflorek.com');
+
+    expect(getAnalyticsMode()).toBe('consent');
+    expect(getAnalyticsConfig()).toEqual({
+      scriptUrl: 'https://analytics.example.com/script.js',
+      websiteId: 'site-id',
+      mode: 'consent',
+      domains: 'matthewflorek.com'
+    });
+  });
+
+  it('falls back to legacy NEXT_PUBLIC analytics values when runtime names are absent', () => {
+    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_MODE', 'cookieless');
+    vi.stubEnv('NEXT_PUBLIC_UMAMI_SCRIPT_URL', 'https://analytics.example.com/script.js');
+    vi.stubEnv('NEXT_PUBLIC_UMAMI_WEBSITE_ID', 'site-id');
+    vi.stubEnv('NEXT_PUBLIC_UMAMI_DOMAINS', 'matthewflorek.com');
+
+    expect(getAnalyticsMode()).toBe('cookieless');
+    expect(getAnalyticsConfig()).toEqual({
+      scriptUrl: 'https://analytics.example.com/script.js',
+      websiteId: 'site-id',
+      mode: 'cookieless',
+      domains: 'matthewflorek.com'
+    });
+  });
+
+  it('prefers runtime-visible html data attributes in the browser', () => {
+    vi.stubEnv('ANALYTICS_MODE', 'off');
+    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_MODE', 'cookieless');
+    vi.stubEnv('NEXT_PUBLIC_UMAMI_SCRIPT_URL', 'https://build.example.com/script.js');
+    vi.stubEnv('NEXT_PUBLIC_UMAMI_WEBSITE_ID', 'build-site');
+    vi.stubGlobal('document', {
+      documentElement: {
+        dataset: {
+          analyticsMode: 'consent',
+          umamiScriptUrl: 'https://analytics.example.com/script.js',
+          umamiWebsiteId: 'site-id',
+          umamiDomains: 'matthewflorek.com'
+        }
+      }
+    });
+
+    expect(getAnalyticsMode()).toBe('consent');
+    expect(getAnalyticsConfig()).toEqual({
+      scriptUrl: 'https://analytics.example.com/script.js',
+      websiteId: 'site-id',
+      mode: 'consent',
+      domains: 'matthewflorek.com'
+    });
+  });
+
   it('is disabled when required public configuration is absent', () => {
     vi.stubEnv('NEXT_PUBLIC_ANALYTICS_MODE', 'cookieless');
     vi.stubEnv('NEXT_PUBLIC_UMAMI_SCRIPT_URL', undefined);
@@ -25,6 +85,7 @@ describe('analytics configuration', () => {
   });
 
   it('rejects invalid script URLs and supports optional domains', () => {
+    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_MODE', 'cookieless');
     vi.stubEnv('NEXT_PUBLIC_UMAMI_SCRIPT_URL', 'javascript:alert(1)');
     vi.stubEnv('NEXT_PUBLIC_UMAMI_WEBSITE_ID', 'site-id');
     expect(getAnalyticsConfig()).toBeNull();
@@ -51,6 +112,27 @@ describe('analytics configuration', () => {
   });
 
   it('fails safely when local storage is unavailable', () => {
+    vi.stubGlobal('document', {
+      documentElement: {
+        dataset: {
+          analyticsMode: 'cookieless'
+        }
+      }
+    });
+    vi.stubGlobal('window', {
+      localStorage: {
+        getItem: () => {
+          throw new Error('unavailable');
+        },
+        removeItem: () => {
+          throw new Error('unavailable');
+        },
+        setItem: () => {
+          throw new Error('unavailable');
+        }
+      }
+    });
+
     expect(isAnalyticsDisabled()).toBe(false);
     expect(() => setAnalyticsDisabled(true)).not.toThrow();
   });

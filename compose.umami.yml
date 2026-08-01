@@ -27,7 +27,7 @@ services:
     stop_grace_period: 30s
 
   umami:
-    image: ${UMAMI_IMAGE:-ghcr.io/umami-software/umami:postgresql-v2.19.0}
+    image: ${UMAMI_IMAGE:-ghcr.io/umami-software/umami:3.2.0}
     profiles: [analytics]
     restart: unless-stopped
     depends_on:
@@ -42,6 +42,7 @@ services:
       - "127.0.0.1:${UMAMI_HOST_PORT:-3110}:3000"
     networks:
       - umami_private
+      - umami_egress
     healthcheck:
       test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/api/heartbeat').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
       interval: 15s
@@ -68,3 +69,5 @@ networks:
   umami_private:
     name: portfolio_umami_private
     internal: true
+  umami_egress:
+    name: portfolio_umami_egress

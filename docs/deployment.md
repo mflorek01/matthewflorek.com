@@ -61,7 +61,7 @@ one-time admin bootstrap must also run through that service.
 
 The checked-in defaults use exact non-`latest` tags: Node
 `20.20-bookworm-slim`, PostgreSQL `16.14-alpine`, and Umami
-`postgresql-v2.19.0`. Tags are still mutable registry references. Before a
+`ghcr.io/umami-software/umami:3.2.0`. Tags are still mutable registry references. Before a
 release, resolve the actual platform-specific digests with the registry/Docker
 tooling, record them in the release evidence, and use those digests in the
 operator's production environment or approved build configuration. If a

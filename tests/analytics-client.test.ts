@@ -1,9 +1,20 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { trackAnalyticsEvent } from '../src/lib/analytics/client';
 
 describe('analytics client', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+
   it('does not send events when local opt-out is enabled', () => {
-    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_MODE', 'cookieless');
+    vi.stubGlobal('document', {
+      documentElement: {
+        dataset: {
+          analyticsMode: 'cookieless'
+        }
+      }
+    });
     const track = vi.fn();
     vi.stubGlobal('window', {
       localStorage: { getItem: () => 'true' },
@@ -16,7 +27,13 @@ describe('analytics client', () => {
   });
 
   it('sends only sanitized categorical properties', () => {
-    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_MODE', 'cookieless');
+    vi.stubGlobal('document', {
+      documentElement: {
+        dataset: {
+          analyticsMode: 'cookieless'
+        }
+      }
+    });
     const track = vi.fn();
     vi.stubGlobal('window', {
       localStorage: { getItem: () => null },
@@ -29,7 +46,13 @@ describe('analytics client', () => {
   });
 
   it('does not send a pre-consent event', () => {
-    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_MODE', 'consent');
+    vi.stubGlobal('document', {
+      documentElement: {
+        dataset: {
+          analyticsMode: 'consent'
+        }
+      }
+    });
     const track = vi.fn();
     vi.stubGlobal('window', {
       localStorage: { getItem: () => null },

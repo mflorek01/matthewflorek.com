@@ -2,7 +2,7 @@
 
 ## Provider and privacy posture
 
-Use self-hosted Umami with its cookie-free, anonymous defaults. Analytics is fail-closed unless `NEXT_PUBLIC_ANALYTICS_MODE` is explicitly set to `cookieless` or `consent`, and both `NEXT_PUBLIC_UMAMI_SCRIPT_URL` and `NEXT_PUBLIC_UMAMI_WEBSITE_ID` are present. `NEXT_PUBLIC_UMAMI_DOMAINS` is optional and should list the production hostname(s). The tracker is loaded after the page becomes interactive and must never block rendering.
+Use self-hosted Umami with its cookie-free, anonymous defaults. Analytics is fail-closed unless `ANALYTICS_MODE` is explicitly set to `cookieless` or `consent`, and both `UMAMI_SCRIPT_URL` and `UMAMI_WEBSITE_ID` are present. `UMAMI_DOMAINS` is optional and should list the production hostname(s). The browser shell mirrors these values through safe HTML data attributes, and the tracker is loaded after the page becomes interactive. For backward compatibility only, the legacy `NEXT_PUBLIC_*` names remain optional fallbacks.
 
 The modes are intentionally explicit:
 
@@ -38,7 +38,7 @@ Public UI can adopt `TrackedLink`, `TrackedButton`, or call `trackAnalyticsEvent
 
 ## Dashboard setup
 
-Create one Umami website for the production portfolio and use a separate website or disabled local configuration for development. The initial dashboard should include visitors, sessions, page views, referrers, campaign parameters, device category, browser, operating system, country/region, project opens, source clicks, resume downloads, contact CTA clicks, and AI-chat starts/completions/rate limits.
+Create one Umami website for the production portfolio and use a separate website or disabled local configuration for development. Use the current official Docker image tag `ghcr.io/umami-software/umami:3.2.0`. Keep session replay and heatmaps unconfigured. The initial dashboard should include visitors, sessions, page views, referrers, campaign parameters, device category, browser, operating system, country/region, project opens, source clicks, resume downloads, contact CTA clicks, and AI-chat starts/completions/rate limits.
 
 At launch, exclude admin routes, development traffic, health checks, uptime monitors, internal jobs, and known bot traffic. Keep Umami bot filtering enabled. Do not enable city-level reporting until there is a clear reason to accept the additional precision.
 
@@ -48,7 +48,7 @@ Retention is a manual, verifiable policy at launch, not an automated deletion jo
 
 After deployment, verify that:
 
-1. The script is absent when analytics mode is off, either required public variable is missing, consent has not been granted in consent mode, or local opt-out is enabled.
+1. The script is absent when analytics mode is off, either required runtime variable is missing, consent has not been granted in consent mode, or local opt-out is enabled.
 2. Consent-mode browser validation confirms that no pre-consent page view or preference event reaches Umami.
 3. A page view appears in cookieless mode without setting a custom analytics cookie.
 4. Each event has only the intended categorical properties.
