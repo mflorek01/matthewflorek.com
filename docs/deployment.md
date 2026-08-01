@@ -25,6 +25,22 @@ through its separate shared Docker network.
 
 ## Normal release path
 
+For ordinary production application releases, the guarded helper is the
+preferred entry point:
+
+```bash
+cd /home/codexdiag/portfolio
+bash scripts/deploy-prod.sh
+```
+
+It uses the published `origin/codex/portfolio-redesign` branch when available,
+otherwise the current reviewed checkout; shows the release identity and changed
+files; requires typing `DEPLOY`; creates a verified database backup; builds in
+an isolated Git worktree; and verifies database readiness plus the immutable
+image revision. It does not change the root-owned Caddy configuration or DNS.
+Use `--with-migrations` only for a reviewed schema/migration change, and use
+`--ref <commit-or-ref>` to deploy a specific release.
+
 1. Complete the staging rehearsal in
    `ops/deployment/staging-rehearsal.md`.
 2. Confirm a clean checkout and record the full immutable `RELEASE_SHA`.

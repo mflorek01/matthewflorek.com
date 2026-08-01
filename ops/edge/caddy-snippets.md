@@ -20,7 +20,8 @@ matthewflorek.com {
     # Keep this policy aligned with the deployed Umami script origin. If the
     # script URL changes, update script-src and connect-src together.
     header {
-        Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' https://analytics.matthewflorek.com; connect-src 'self' https://analytics.matthewflorek.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data: https:; frame-src 'none'"
+        # Next.js requires its inline bootstrap data for the initial render.
+        Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline' https://analytics.matthewflorek.com; connect-src 'self' https://analytics.matthewflorek.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data: https:; frame-src 'none'"
         Strict-Transport-Security "max-age=31536000; includeSubDomains"
         Referrer-Policy "strict-origin-when-cross-origin"
         Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"

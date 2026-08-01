@@ -15,7 +15,7 @@ COMPOSE_OVERRIDE="${EDGE_ROOT}/docker-compose.portfolio-edge.yml"
 BACKUP_ROOT="${EDGE_BACKUP_ROOT:-/root/portfolio-edge-backups}"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 
-for command in docker sha256sum install cmp; do
+for command in docker sha256sum install cmp awk mktemp; do
   command -v "$command" >/dev/null 2>&1 || {
     printf 'Required command is unavailable: %s\n' "$command" >&2
     exit 2
@@ -52,7 +52,32 @@ chmod 700 "$BACKUP_ROOT"
 backup_caddyfile="$BACKUP_ROOT/Caddyfile.$STAMP"
 install -m 600 "$CADDYFILE" "$backup_caddyfile"
 
-if ! grep -q '^# BEGIN Matthew Florek portfolio managed block$' "$CADDYFILE"; then
+if grep -q '^# BEGIN Matthew Florek portfolio managed block$' "$CADDYFILE"; then
+  replacement_file="$(mktemp "$BACKUP_ROOT/.Caddyfile.${STAMP}.XXXXXX")"
+  trap 'rm -f "$replacement_file"' EXIT
+
+  awk -v fragment="$SCRIPT_ROOT/ops/edge/portfolio-edge.caddy" '
+    $0 == "# BEGIN Matthew Florek portfolio managed block" {
+      if (replaced) exit 2
+      while ((getline line < fragment) > 0) print line
+      close(fragment)
+      inside = 1
+      next
+    }
+    $0 == "# END Matthew Florek portfolio managed block" {
+      if (!inside) exit 3
+      inside = 0
+      replaced = 1
+      next
+    }
+    !inside { print }
+    END {
+      if (inside || !replaced) exit 4
+    }
+  ' "$CADDYFILE" > "$replacement_file"
+  install -m 600 "$replacement_file" "$CADDYFILE"
+  printf 'Updated the existing managed portfolio Caddy block.\n'
+else
   if grep -q '^matthewflorek\.com[[:space:]]*{' "$CADDYFILE"; then
     printf 'A matthewflorek.com block exists without the managed marker; refusing to append a duplicate.\n' >&2
     printf 'Review %s and the backup at %s.\n' "$CADDYFILE" "$backup_caddyfile" >&2
