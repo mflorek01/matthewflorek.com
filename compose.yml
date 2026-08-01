@@ -1,0 +1,104 @@
+name: portfolio
+
+services:
+  postgres:
+    image: postgres:16.14-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-portfolio}
+      POSTGRES_USER: ${POSTGRES_USER:-portfolio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the host environment}
+    volumes:
+      - portfolio_postgres_data:/var/lib/postgresql/data
+    networks:
+      - portfolio_private
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    mem_limit: 768m
+    cpus: 0.75
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "5"
+
+  portfolio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VCS_REF: ${VCS_REF:-unknown}
+    image: ${PORTFOLIO_IMAGE:-portfolio-redesign:local}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ${PORTFOLIO_ENV_FILE:-.env}
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      DATABASE_URL: postgresql://${POSTGRES_USER:-portfolio}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the host environment}@postgres:5432/${POSTGRES_DB:-portfolio}
+    ports:
+      - "127.0.0.1:${PORTFOLIO_HOST_PORT:-3101}:3000"
+    networks:
+      - portfolio_private
+      - portfolio_egress
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/api/health?db=1').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 45s
+    mem_limit: 768m
+    cpus: 1.0
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "5"
+
+  portfolio-migrate:
+    profiles: [operations]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+    image: ${PORTFOLIO_MIGRATOR_IMAGE:-portfolio-redesign-migrator:local}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ${PORTFOLIO_ENV_FILE:-.env}
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-portfolio}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the host environment}@postgres:5432/${POSTGRES_DB:-portfolio}
+    networks:
+      - portfolio_private
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  portfolio_postgres_data:
+    name: portfolio_postgres_data
+
+networks:
+  portfolio_private:
+    name: portfolio_private
+    internal: true
+  portfolio_egress:
+    name: portfolio_egress

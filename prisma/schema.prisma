@@ -1,0 +1,325 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PublicationStatus {
+  PUBLIC
+  DRAFT
+  NEEDS_REVIEW
+  ARCHIVED
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+  UNLISTED
+}
+
+enum RevisionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AssetKind {
+  IMAGE
+  DOCUMENT
+  VIDEO
+  OTHER
+}
+
+enum SyncStatus {
+  IDLE
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
+
+enum AiKnowledgeStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model AdminUser {
+  id                  String                 @id @default(cuid())
+  email               String                 @unique
+  passwordHash        String
+  name                String?
+  isActive            Boolean                @default(true)
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  sessions            AdminSession[]
+  cmsRevisions        CmsPageRevision[]      @relation("CmsRevisionCreator")
+  projectRevisions    ProjectRevision[]      @relation("ProjectRevisionCreator")
+  projectOverrides    ProjectOverride[]      @relation("OverrideCreator")
+  projectAssets       ProjectAsset[]          @relation("AssetCreator")
+  auditLogs           AuditLog[]              @relation("AuditActor")
+  knowledgeDocuments  AiKnowledgeDocument[]  @relation("KnowledgeCreator")
+  spendReservations   AiSpendReservation[]   @relation("SpendCreator")
+}
+
+model AdminSession {
+  id           String    @id @default(cuid())
+  adminUserId  String
+  tokenHash    String    @unique
+  expiresAt    DateTime
+  lastSeenAt   DateTime?
+  ipHash       String?
+  userAgent    String?
+  createdAt    DateTime  @default(now())
+  adminUser    AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId, expiresAt])
+}
+
+model CmsPage {
+  id            String             @id @default(cuid())
+  slug          String             @unique
+  title         String
+  isPublished   Boolean            @default(false)
+  publishedAt   DateTime?
+  blocks        CmsBlock[]
+  revisions     CmsPageRevision[]  @relation("PageRevisions")
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
+model CmsBlock {
+  id          String   @id @default(cuid())
+  pageId      String
+  blockKey    String
+  kind        String
+  sortOrder   Int      @default(0)
+  visibility  Visibility @default(PUBLIC)
+  includeInAi Boolean  @default(false)
+  data        Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  page        CmsPage  @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, blockKey])
+  @@index([pageId, sortOrder])
+}
+
+model CmsPageRevision {
+  id          String         @id @default(cuid())
+  pageId      String
+  version     Int
+  status      RevisionStatus @default(DRAFT)
+  snapshot    Json
+  createdById String?
+  createdAt   DateTime       @default(now())
+  publishedAt DateTime?
+  page        CmsPage        @relation("PageRevisions", fields: [pageId], references: [id], onDelete: Cascade)
+  createdBy   AdminUser?     @relation("CmsRevisionCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@unique([pageId, version])
+  @@index([pageId, status])
+}
+
+model ProjectCategory {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  name      String
+  sortOrder Int       @default(0)
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Project {
+  id                    String                   @id @default(cuid())
+  slug                  String                   @unique
+  categoryId            String
+  title                 String
+  summary               String
+  details               Json?
+  publicationStatus     PublicationStatus       @default(DRAFT)
+  visibility            Visibility               @default(PRIVATE)
+  sortOrder             Int                      @default(0)
+  includeInAi           Boolean                  @default(false)
+  source                String?
+  reviewNotes           String?
+  category              ProjectCategory          @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  links                 ProjectLink[]
+  assets                ProjectAsset[]
+  revisions             ProjectRevision[]        @relation("ProjectRevisions")
+  override              ProjectOverride?
+  importLinks           MetamorphysisProjectLink[]
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+
+  @@index([categoryId, sortOrder])
+  @@index([visibility, publicationStatus])
+}
+
+model ProjectLink {
+  id        String   @id @default(cuid())
+  projectId String
+  label     String
+  url       String
+  sortOrder Int      @default(0)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, sortOrder])
+}
+
+model ProjectAsset {
+  id          String    @id @default(cuid())
+  projectId   String
+  kind        AssetKind
+  path        String
+  altText     String?
+  visibility  Visibility @default(PRIVATE)
+  createdById String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy   AdminUser? @relation("AssetCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([projectId, visibility])
+}
+
+model ProjectRevision {
+  id          String         @id @default(cuid())
+  projectId   String
+  version     Int
+  status      RevisionStatus @default(DRAFT)
+  snapshot    Json
+  createdById String?
+  createdAt   DateTime       @default(now())
+  publishedAt DateTime?
+  project     Project        @relation("ProjectRevisions", fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy   AdminUser?     @relation("ProjectRevisionCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@unique([projectId, version])
+  @@index([projectId, status])
+}
+
+model ProjectOverride {
+  id          String   @id @default(cuid())
+  projectId   String   @unique
+  fields      Json
+  createdById  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy   AdminUser? @relation("OverrideCreator", fields: [createdById], references: [id], onDelete: SetNull)
+}
+
+model MetamorphysisImportSnapshot {
+  id             String                 @id @default(cuid())
+  sourceVersion  String
+  sourceHash     String
+  payload        Json
+  importedAt     DateTime               @default(now())
+  sourceUpdatedAt DateTime?
+  projectLinks   MetamorphysisProjectLink[]
+
+  @@unique([sourceVersion, sourceHash])
+  @@index([importedAt])
+}
+
+model MetamorphysisProjectLink {
+  id              String                      @id @default(cuid())
+  snapshotId      String
+  projectId       String?
+  externalProjectId String
+  importedTitle   String?
+  importedPayload Json
+  importedAt      DateTime                    @default(now())
+  snapshot        MetamorphysisImportSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  project         Project?                    @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@unique([snapshotId, externalProjectId])
+  @@index([externalProjectId])
+}
+
+model MetamorphysisSyncState {
+  id             String     @id @default("default")
+  status         SyncStatus @default(IDLE)
+  lastStartedAt  DateTime?
+  lastFinishedAt DateTime?
+  lastSnapshotId String?
+  cursor         String?
+  errorMessage   String?
+  updatedAt      DateTime   @updatedAt
+}
+
+model AuditLog {
+  id         String    @id @default(cuid())
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime  @default(now())
+  actor      AdminUser? @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId, createdAt])
+  @@index([actorId, createdAt])
+}
+
+model AiKnowledgeDocument {
+  id            String            @id @default(cuid())
+  slug          String            @unique
+  title         String
+  sourceType    String
+  storagePath   String?
+  contentHash   String?
+  vectorStoreId String?
+  status        AiKnowledgeStatus @default(DRAFT)
+  includeInAi   Boolean           @default(false)
+  metadata      Json?
+  createdById   String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  createdBy     AdminUser?        @relation("KnowledgeCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([status, includeInAi])
+}
+
+model AiUsageRecord {
+  id             String   @id @default(cuid())
+  feature        String
+  requestId      String?
+  model          String
+  inputTokens    Int      @default(0)
+  outputTokens   Int      @default(0)
+  estimatedCostUsd Decimal? @db.Decimal(12, 6)
+  status         String
+  createdAt      DateTime @default(now())
+
+  @@index([feature, createdAt])
+  @@index([requestId])
+}
+
+model AiSpendReservation {
+  id             String   @id @default(cuid())
+  scope          String
+  periodStart    DateTime
+  amountUsd      Decimal  @db.Decimal(12, 6)
+  status         String
+  createdById    String?
+  createdAt      DateTime @default(now())
+  createdBy      AdminUser? @relation("SpendCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([scope, periodStart])
+}
+
+model AiRateLimitRecord {
+  id           String   @id @default(cuid())
+  subjectHash  String
+  bucketStart  DateTime
+  requestCount Int      @default(0)
+  updatedAt    DateTime @updatedAt
+
+  @@unique([subjectHash, bucketStart])
+  @@index([bucketStart])
+}

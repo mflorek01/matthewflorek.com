@@ -1,0 +1,68 @@
+name: Portfolio CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Require migration baseline
+        run: test -n "$(find prisma/migrations -mindepth 2 -maxdepth 2 -name migration.sql -print -quit)"
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test
+
+      - name: Production build
+        run: npm run build
+
+      - name: Validate shell syntax
+        run: find scripts -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
+
+      - name: Create CI environment
+        run: |
+          cat > .env.ci <<'EOF'
+          NODE_ENV=production
+          DATABASE_URL=postgresql://portfolio:portfolio-ci@postgres:5432/portfolio
+          AUTH_SESSION_SECRET=ci-only-secret-ci-only-secret-ci-only-secret
+          ENABLE_CMS_SYNC=false
+          ENABLE_METAMORPHYSIS_SYNC=false
+          ENABLE_AI_FEATURES=false
+          ENABLE_UMAMI=false
+          POSTGRES_DB=portfolio
+          POSTGRES_USER=portfolio
+          POSTGRES_PASSWORD=portfolio-ci
+          PORTFOLIO_ENV_FILE=.env.ci
+          EOF
+
+      - name: Validate Compose configuration
+        run: PORTFOLIO_ENV_FILE=.env.ci docker compose --env-file .env.ci -f compose.yml config --quiet
+
+      - name: Build production container
+        run: docker build --tag portfolio-redesign:ci --build-arg VCS_REF=${{ github.sha }} .

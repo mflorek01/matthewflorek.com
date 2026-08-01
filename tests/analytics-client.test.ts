@@ -1,0 +1,43 @@
+import { describe, expect, it, vi } from 'vitest';
+import { trackAnalyticsEvent } from '../src/lib/analytics/client';
+
+describe('analytics client', () => {
+  it('does not send events when local opt-out is enabled', () => {
+    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_MODE', 'cookieless');
+    const track = vi.fn();
+    vi.stubGlobal('window', {
+      localStorage: { getItem: () => 'true' },
+      umami: { track }
+    });
+
+    expect(trackAnalyticsEvent('ai_question_submitted', { result: 'completed' })).toBe(false);
+    expect(track).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it('sends only sanitized categorical properties', () => {
+    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_MODE', 'cookieless');
+    const track = vi.fn();
+    vi.stubGlobal('window', {
+      localStorage: { getItem: () => null },
+      umami: { track }
+    });
+
+    expect(trackAnalyticsEvent('project_opened', { slug: 'Grant Dashboard' })).toBe(true);
+    expect(track).toHaveBeenCalledWith('project_opened', { slug: 'grant-dashboard' });
+    vi.unstubAllGlobals();
+  });
+
+  it('does not send a pre-consent event', () => {
+    vi.stubEnv('NEXT_PUBLIC_ANALYTICS_MODE', 'consent');
+    const track = vi.fn();
+    vi.stubGlobal('window', {
+      localStorage: { getItem: () => null },
+      umami: { track }
+    });
+
+    expect(trackAnalyticsEvent('tab_viewed', { tab: 'overview' })).toBe(false);
+    expect(track).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+});

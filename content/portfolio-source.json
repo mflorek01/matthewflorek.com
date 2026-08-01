@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "sourceType": "curated-portfolio-content",
+  "lastCurated": "2026-07-31",
+  "publicationPolicy": {
+    "publicStatus": "Only records marked PUBLIC should be rendered without review.",
+    "draftStatus": "DRAFT records are personal-project candidates that still need Matthew's wording and link review.",
+    "needsReviewStatus": "NEEDS_REVIEW records contain employer-derived or otherwise sensitive claims and must be approved before publication.",
+    "privacyBoundary": "No private contact details, private repository contents, internal URLs, customer names, confidential metrics, or employer-sensitive implementation details are included."
+  },
+  "overview": {
+    "publicationStatus": "PUBLIC",
+    "provenance": [
+      {
+        "source": "mflorek01/matthewflorek.com history before 22cbe13",
+        "detail": "Prior public site copy in Hero.tsx, About.tsx, data.ts, and public assets."
+      },
+      {
+        "source": "mflorek01/metamorphysis/data/mega-resume.json",
+        "detail": "Read-only source for headline, skills, education, and project themes; private contact fields intentionally omitted."
+      }
+    ],
+    "name": "Matthew Florek",
+    "headline": "Data analytics, business intelligence, and AI-assisted workflows",
+    "shortBio": "I build practical systems that turn messy information and repetitive work into clearer decisions and more reliable workflows. My work sits at the intersection of data analysis, automation, operations, and AI-assisted software development.",
+    "longBio": "My background combines finance, business analytics, data quality, workflow automation, and hands-on systems building. I enjoy taking an ambiguous operational problem, finding the structure inside it, and turning that structure into a tool, dataset, dashboard, or repeatable process that people can actually use.",
+    "education": [
+      {
+        "credential": "B.S. in Finance",
+        "institution": "Northern Arizona University",
+        "year": "2024",
+        "publicationStatus": "PUBLIC",
+        "provenance": "Prior public site data.ts"
+      },
+      {
+        "credential": "Certificate in Business Analytics",
+        "institution": "Northern Arizona University",
+        "year": "2024",
+        "publicationStatus": "PUBLIC",
+        "provenance": "Prior public site data.ts"
+      },
+      {
+        "credential": "SQL for Data Science Certification",
+        "institution": "UC Davis Extension",
+        "year": "2023",
+        "publicationStatus": "PUBLIC",
+        "provenance": "Prior public site data.ts"
+      }
+    ],
+    "skills": [
+      "SQL",
+      "Python",
+      "Excel",
+      "Power Query",
+      "Power Pivot",
+      "Power Automate",
+      "Power BI",
+      "Tableau",
+      "Airtable",
+      "R",
+      "QGIS",
+      "TypeScript",
+      "PostgreSQL",
+      "AI-assisted development",
+      "data modeling",
+      "ETL and ELT",
+      "workflow automation",
+      "dashboard development",
+      "data quality",
+      "technical documentation"
+    ],
+    "links": [
+      {
+        "label": "LinkedIn",
+        "url": "https://linkedin.com/in/matthew-florek/",
+        "visibility": "PUBLIC",
+        "publicationStatus": "PUBLIC",
+        "provenance": "Prior public site Hero.tsx"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/mflorek01",
+        "visibility": "PUBLIC",
+        "publicationStatus": "PUBLIC",
+        "provenance": "Public GitHub profile"
+      }
+    ],
+    "resumeAsset": {
+      "path": "/downloads/matthew-florek-resume.pdf",
+      "publicationStatus": "PUBLIC",
+      "provenance": "Recovered from prior public site commit e8b37db; Matthew should confirm that the document is current and still intended for public distribution."
+    },
+    "portraitAsset": {
+      "path": "/assets/matthew-florek-headshot.png",
+      "publicationStatus": "NEEDS_REVIEW",
+      "provenance": "Recovered from prior public site commit e8b37db; Matthew should confirm the preferred portrait and usage rights."
+    },
+    "includeInAi": true
+  },
+  "projects": [
+    {
+      "id": "work-operations-grant-database",
+      "category": "WORK",
+      "title": "Operations Grant Database",
+      "publicationStatus": "PUBLIC",
+      "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_operations_grant_database"],
+      "summary": "An Excel- and Power Query-based operational data system that brought fragmented grant information into a more consistent structure for reporting and downstream analysis.",
+      "tags": ["Excel", "Power Query", "data modeling", "data quality", "grants", "reporting"],
+      "links": [],
+      "includeInAi": false,
+      "reviewNotes": "Public copy is intentionally generic. Internal data volumes, source systems, stakeholders, URLs, and workflow specifics are withheld."
+    },
+    {
+      "id": "work-grant-application-dashboard",
+      "category": "WORK",
+      "title": "Grant Application Dashboard",
+      "publicationStatus": "PUBLIC",
+      "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_grant_application_dashboard"],
+      "summary": "A reporting dashboard designed to give teams a clearer view of grant application activity, status, and trends using a structured data model.",
+      "tags": ["Excel", "dashboard development", "Power Query", "data modeling", "operations"],
+      "links": [],
+      "includeInAi": false,
+      "reviewNotes": "Public copy is intentionally generic. Internal program names, screenshots, customer details, URLs, and unreviewed outcomes are withheld."
+    },
+    {
+      "id": "work-grant-evaluation-automation",
+      "category": "WORK",
+      "title": "Grant Evaluation Workflow Automation",
+      "publicationStatus": "PUBLIC",
+      "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_grant_evaluation_power_automate_flow"],
+      "summary": "An automation workflow that reduced repetitive evaluation-data handling across a legacy web process and made the extraction step more repeatable.",
+      "tags": ["Power Automate Desktop", "JavaScript", "workflow automation", "data extraction", "legacy systems"],
+      "links": [],
+      "includeInAi": false,
+      "reviewNotes": "Public copy is intentionally generic. System names, URLs, screenshots, customer information, and quantified savings are withheld."
+    },
+    {
+      "id": "work-title-i-comparability",
+      "category": "WORK",
+      "title": "Title I Comparability Evaluation",
+      "publicationStatus": "PUBLIC",
+      "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_title_i_comparability_evaluator"],
+      "summary": "A rules-based data workflow supporting a federal education compliance review process by separating straightforward cases from those needing specialist attention.",
+      "tags": ["Power Query", "compliance", "federal programs", "business rules", "automation"],
+      "links": [],
+      "includeInAi": false,
+      "reviewNotes": "Public copy is intentionally generic. Employer, program, case, and implementation details are withheld."
+    },
+    {
+      "id": "work-school-district-boundary-analysis",
+      "category": "WORK",
+      "title": "School District Boundary and Census Analysis",
+      "publicationStatus": "PUBLIC",
+      "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_new_1778635265340", "mflorek01/metamorphysis/data/mega-resume.json project_walnut_grove_census_boundary_update"],
+      "summary": "A geospatial analysis workflow combining boundary data and operational information to support school-district reporting and planning.",
+      "tags": ["QGIS", "GIS", "geospatial analysis", "Census", "data validation"],
+      "links": [],
+      "includeInAi": false,
+      "reviewNotes": "Public copy is intentionally generic. District references, source datasets, map artifacts, customer details, and internal URLs are withheld."
+    },
+    {
+      "id": "ai-metamorphysis",
+      "category": "AI",
+      "title": "Metamorphysis.ai",
+      "publicationStatus": "PUBLIC",
+      "provenance": ["Public site https://metamorphysis.ai", "mflorek01/metamorphysis README.md, read-only inspection"],
+      "summary": "A resume-intelligence workspace for turning user-owned career sources into structured, targeted, ATS-aware documents and AI-assisted career workflows.",
+      "tags": ["AI", "Next.js", "TypeScript", "PostgreSQL", "resume systems", "AI-assisted development"],
+      "links": [
+        {
+          "label": "Live site",
+          "url": "https://metamorphysis.ai",
+          "visibility": "PUBLIC",
+          "publicationStatus": "PUBLIC"
+        }
+      ],
+      "includeInAi": true,
+      "reviewNotes": "Confirm the preferred public description and whether the portfolio should identify Matthew as creator, maintainer, or contributor."
+    },
+    {
+      "id": "ai-bettrgrants",
+      "category": "AI",
+      "title": "BettrGrants",
+      "publicationStatus": "PUBLIC",
+      "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_bettrgrants_platform"],
+      "summary": "A grant-compliance platform concept focused on making grant workflows, structured data, and automation easier to manage.",
+      "tags": ["SaaS", "TypeScript", "PostgreSQL", "AI-assisted development", "compliance", "workflow automation"],
+      "links": [],
+      "includeInAi": true,
+      "reviewNotes": "Public copy is intentionally high-level. No public URL was verified, so no link is shown. Ownership language, current status, implementation details, and partner/customer information remain intentionally unspecified."
+    },
+    {
+      "id": "ai-hypermap",
+      "category": "AI",
+      "title": "HyperMap",
+      "publicationStatus": "PUBLIC",
+      "provenance": ["Matthew's implementation brief in the portfolio redesign request"],
+      "summary": "An Android map-navigation app concept with an embedded AI assistant intended to provide more useful, conversational help during navigation.",
+      "tags": ["Android", "AI assistant", "maps", "mobile development", "navigation"],
+      "links": [],
+      "includeInAi": true,
+      "reviewNotes": "Public copy is intentionally high-level. No public repository or demo was verified, so no link is shown. The comparative claim, current status, technical stack, and any personal or third-party data remain withheld."
+    },
+    {
+      "id": "ai-resume-workshop-system",
+      "category": "AI",
+      "title": "AI-Assisted Resume Workshop System",
+      "publicationStatus": "DRAFT",
+      "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_resume_workshop_system", "mflorek01/metamorphysis README.md, read-only inspection"],
+      "summary": "A structured workflow for using AI to organize career information and support targeted resume preparation while keeping source material reviewable.",
+      "tags": ["AI", "resume systems", "ATS optimization", "structured data", "automation"],
+      "links": [],
+      "includeInAi": true,
+      "reviewNotes": "Likely overlaps with Metamorphysis. Confirm whether this should be a separate project card or a capability within Metamorphysis."
+    },
+    {
+      "id": "ai-arxiv-observatory",
+      "category": "AI",
+      "title": "ArXiv Research Observatory",
+      "publicationStatus": "DRAFT",
+      "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_arxiv_observatory"],
+      "summary": "A research-oriented data pipeline and observatory concept for organizing and exploring papers and related signals.",
+      "tags": ["AI", "research systems", "data pipelines", "analytics", "automation"],
+      "links": [],
+      "includeInAi": true,
+      "reviewNotes": "Confirm whether the project is public, its current state, and whether a demo or repository can be linked."
+    },
+    {
+      "id": "ai-agent-harness",
+      "category": "AI",
+      "title": "AI Agent Harness Experiments",
+      "publicationStatus": "DRAFT",
+      "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_ai_agent_harness"],
+      "summary": "Experiments in building, constraining, and evaluating AI-agent workflows for practical automation and software work.",
+      "tags": ["AI agents", "Python", "LLMs", "automation", "evaluation"],
+      "links": [],
+      "includeInAi": true,
+      "reviewNotes": "Confirm which experiments are public and replace the broad summary with specific, publishable examples."
+    },
+    {
+      "id": "ai-yapgpt-android",
+      "category": "AI",
+      "title": "YapGPT Android AI Voice App",
+      "publicationStatus": "DRAFT",
+      "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_yapgpt_android_ai"],
+      "summary": "An Android voice-assistant experiment exploring conversational interaction, speech input, and model-backed responses.",
+      "tags": ["Android", "AI", "voice interface", "Whisper", "local inference"],
+      "links": [],
+      "includeInAi": true,
+      "reviewNotes": "Confirm whether this is the same project as HyperMap or a separate project, and provide a public link if available."
+    }
+  ],
+  "githubRepositories": [
+    {
+      "name": "matthewflorek.com",
+      "url": "https://github.com/mflorek01/matthewflorek.com",
+      "visibility": "PUBLIC",
+      "publicationStatus": "PUBLIC",
+      "provenance": "Connected GitHub repository inspection",
+      "notes": "The repository currently contains a placeholder on the main branch; earlier public site material was recovered from history."
+    }
+  ]
+}
