@@ -52,6 +52,42 @@ chmod 700 "$BACKUP_ROOT"
 backup_caddyfile="$BACKUP_ROOT/Caddyfile.$STAMP"
 install -m 600 "$CADDYFILE" "$backup_caddyfile"
 
+if [[ ! -f "$COMPOSE_OVERRIDE" ]]; then
+  install -m 600 "$SCRIPT_ROOT/docker-compose.portfolio-edge.yml" "$COMPOSE_OVERRIDE"
+fi
+
+docker network inspect portfolio_private >/dev/null 2>&1 || {
+  printf 'Required Docker network is missing: portfolio_private\n' >&2
+  exit 4
+}
+docker network inspect portfolio_umami_private >/dev/null 2>&1 || {
+  printf 'Required Docker network is missing: portfolio_umami_private\n' >&2
+  exit 4
+}
+
+if ! docker network inspect portfolio_private --format '{{json .Containers}}' | grep -q 'metamorphysis-caddy'; then
+  docker network connect portfolio_private "$CADDY_CONTAINER"
+fi
+if ! docker network inspect portfolio_umami_private --format '{{json .Containers}}' | grep -q 'metamorphysis-caddy'; then
+  docker network connect portfolio_umami_private "$CADDY_CONTAINER"
+fi
+
+docker exec "$CADDY_CONTAINER" caddy validate \
+  --config /etc/caddy/Caddyfile --adapter caddyfile
+
+docker compose --env-file "$ENV_FILE" \
+  -f "$EDGE_ROOT/docker-compose.yml" \
+  -f "$EDGE_ROOT/docker-compose.prod.yml" \
+  -f "$COMPOSE_OVERRIDE" config --quiet
+
+docker compose --env-file "$ENV_FILE" \
+  -f "$EDGE_ROOT/docker-compose.yml" \
+  -f "$EDGE_ROOT/docker-compose.prod.yml" \
+  -f "$COMPOSE_OVERRIDE" up -d caddy
+
+# The existing production Compose lifecycle can restore its Caddyfile.  Apply
+# the managed block only after it completes, immediately before validation and
+# reload, so the running process receives the reviewed policy.
 if grep -q '^# BEGIN Matthew Florek portfolio managed block$' "$CADDYFILE"; then
   replacement_file="$(mktemp "$BACKUP_ROOT/.Caddyfile.${STAMP}.XXXXXX")"
   trap 'rm -f "$replacement_file"' EXIT
@@ -87,43 +123,19 @@ else
   cat "$SCRIPT_ROOT/ops/edge/portfolio-edge.caddy" >> "$CADDYFILE"
 fi
 
-if [[ ! -f "$COMPOSE_OVERRIDE" ]]; then
-  install -m 600 "$SCRIPT_ROOT/docker-compose.portfolio-edge.yml" "$COMPOSE_OVERRIDE"
-fi
-
-docker network inspect portfolio_private >/dev/null 2>&1 || {
-  printf 'Required Docker network is missing: portfolio_private\n' >&2
-  exit 4
-}
-docker network inspect portfolio_umami_private >/dev/null 2>&1 || {
-  printf 'Required Docker network is missing: portfolio_umami_private\n' >&2
-  exit 4
-}
-
-if ! docker network inspect portfolio_private --format '{{json .Containers}}' | grep -q 'metamorphysis-caddy'; then
-  docker network connect portfolio_private "$CADDY_CONTAINER"
-fi
-if ! docker network inspect portfolio_umami_private --format '{{json .Containers}}' | grep -q 'metamorphysis-caddy'; then
-  docker network connect portfolio_umami_private "$CADDY_CONTAINER"
-fi
-
-docker exec "$CADDY_CONTAINER" caddy validate \
-  --config /etc/caddy/Caddyfile --adapter caddyfile
-
-docker compose --env-file "$ENV_FILE" \
-  -f "$EDGE_ROOT/docker-compose.yml" \
-  -f "$EDGE_ROOT/docker-compose.prod.yml" \
-  -f "$COMPOSE_OVERRIDE" config --quiet
-
-docker compose --env-file "$ENV_FILE" \
-  -f "$EDGE_ROOT/docker-compose.yml" \
-  -f "$EDGE_ROOT/docker-compose.prod.yml" \
-  -f "$COMPOSE_OVERRIDE" up -d caddy
-
 docker exec "$CADDY_CONTAINER" caddy validate \
   --config /etc/caddy/Caddyfile --adapter caddyfile
 docker exec "$CADDY_CONTAINER" caddy reload \
   --config /etc/caddy/Caddyfile --adapter caddyfile
+
+# Validate the policy held by Caddy's admin API, not just the bind-mounted
+# file. This prevents a misleading success if a future Compose hook rewrites
+# the file or reloads an earlier configuration.
+if ! docker exec "$CADDY_CONTAINER" wget -qO- http://127.0.0.1:2019/config/ \
+  | grep -Fq "script-src 'self' 'unsafe-inline' https://analytics.matthewflorek.com"; then
+  printf 'Caddy did not load the expected portfolio Content-Security-Policy. No DNS changes were made.\n' >&2
+  exit 5
+fi
 
 docker compose --env-file "$ENV_FILE" \
   -f "$EDGE_ROOT/docker-compose.yml" \
