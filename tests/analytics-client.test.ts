@@ -37,6 +37,7 @@ describe('analytics client', () => {
     const track = vi.fn();
     vi.stubGlobal('window', {
       localStorage: { getItem: () => null },
+      location: { pathname: '/work' },
       umami: { track }
     });
 
@@ -56,11 +57,27 @@ describe('analytics client', () => {
     const track = vi.fn();
     vi.stubGlobal('window', {
       localStorage: { getItem: () => null },
+      location: { pathname: '/work' },
       umami: { track }
     });
 
     expect(trackAnalyticsEvent('tab_viewed', { tab: 'overview' })).toBe(false);
     expect(track).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
+  });
+
+  it('does not send events from the private admin area', () => {
+    vi.stubGlobal('document', {
+      documentElement: { dataset: { analyticsMode: 'cookieless' } }
+    });
+    const track = vi.fn();
+    vi.stubGlobal('window', {
+      localStorage: { getItem: () => null },
+      location: { pathname: '/admin/analytics' },
+      umami: { track }
+    });
+
+    expect(trackAnalyticsEvent('tab_viewed', { tab: 'overview' })).toBe(false);
+    expect(track).not.toHaveBeenCalled();
   });
 });

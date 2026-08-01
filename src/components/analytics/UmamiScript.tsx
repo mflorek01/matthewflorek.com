@@ -1,18 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getAnalyticsConfig, isAnalyticsDisabled } from '@/lib/analytics/config';
+import { usePathname } from 'next/navigation';
+import { getAnalyticsConfig, isAnalyticsDisabled, isAnalyticsExcludedPath } from '@/lib/analytics/config';
 
 export function UmamiScript({ enabled = true }: { enabled?: boolean }) {
   const config = getAnalyticsConfig();
+  const pathname = usePathname();
   const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
-    const refresh = () => setAllowed(!isAnalyticsDisabled());
+    const refresh = () => setAllowed(!isAnalyticsDisabled() && !isAnalyticsExcludedPath(pathname));
     refresh();
     window.addEventListener('portfolio-analytics-preference-changed', refresh);
     return () => window.removeEventListener('portfolio-analytics-preference-changed', refresh);
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     if (!enabled || !config || !allowed) return;

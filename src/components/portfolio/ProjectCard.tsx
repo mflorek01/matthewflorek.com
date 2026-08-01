@@ -5,10 +5,6 @@ import type { PublicPortfolioProject } from '@/lib/content/portfolio';
 export function ProjectCard({ project }: { project: PublicPortfolioProject }) {
   return (
     <article className="project-card">
-      <div className="project-card-topline">
-        <span className="project-category">{project.category === 'AI' ? 'AI project' : 'Work project'}</span>
-        <span className="project-arrow" aria-hidden="true">↗</span>
-      </div>
       <h3><Link href={`/projects/${project.id}`}>{project.title}</Link></h3>
       <p>{project.summary}</p>
       <div className="tag-list" aria-label={`${project.title} tools and themes`}>

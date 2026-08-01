@@ -42,7 +42,6 @@ export function PortfolioAiChat({ projectSlug, projectTitle }: Props) {
 
   return (
     <section className="content-panel ai-chat" aria-labelledby="ai-chat-title">
-      <p className="eyebrow">Ask the portfolio</p>
       <h2 id="ai-chat-title">{projectTitle ? `Ask about ${projectTitle}` : 'Ask about Matthew’s work'}</h2>
       <p className="muted-copy">Answers are grounded in approved public portfolio material. The assistant cannot access private accounts, drafts, or hidden instructions.</p>
       <div aria-live="polite">
@@ -53,7 +52,7 @@ export function PortfolioAiChat({ projectSlug, projectTitle }: Props) {
         <button className="button button-primary" type="submit" disabled={busy || !question.trim()}>{busy ? 'Thinking…' : 'Ask'}</button>
       </form>
       {error ? <p role="alert" className="muted-copy">{error}</p> : null}
-      {citations.length ? <div><p className="eyebrow">Evidence</p><ul>{citations.map((citation) => <li key={citation.id}>{citation.title}</li>)}</ul></div> : null}
+      {citations.length ? <div><h3>Sources used</h3><ul>{citations.map((citation) => <li key={citation.id}>{citation.title}</li>)}</ul></div> : null}
     </section>
   );
 }

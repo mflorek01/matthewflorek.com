@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Matthew Florek orbital mark</title>
+  <desc id="desc">A blue sphere surrounded by two fine orbital paths.</desc>
+  <defs>
+    <linearGradient id="orb" x1="12" y1="10" x2="52" y2="54" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00133f"/>
+      <stop offset="0.62" stop-color="#3469ff"/>
+      <stop offset="1" stop-color="#00a6d6"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="29" fill="#eef5ff"/>
+  <ellipse cx="32" cy="32" rx="27" ry="12.5" fill="none" stroke="#3469ff" stroke-width="1.8" transform="rotate(-28 32 32)"/>
+  <ellipse cx="32" cy="32" rx="27" ry="12.5" fill="none" stroke="#00a6d6" stroke-width="1.8" transform="rotate(48 32 32)"/>
+  <circle cx="32" cy="32" r="10.5" fill="url(#orb)"/>
+</svg>

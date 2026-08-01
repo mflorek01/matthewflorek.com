@@ -91,6 +91,10 @@ export function isAnalyticsDisabled() {
   return mode === 'consent' && preference !== 'opt-in';
 }
 
+export function isAnalyticsExcludedPath(pathname: string) {
+  return pathname === '/admin' || pathname.startsWith('/admin/');
+}
+
 export function setAnalyticsPreference(preference: AnalyticsPreference | null) {
   if (typeof window === 'undefined') return;
   try {

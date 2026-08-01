@@ -9,7 +9,7 @@ export default async function AiAdminPage() {
   const config = getAiConfig();
   return (
     <main className="shell page-section">
-      <p className="eyebrow">Admin · AI assistant</p>
+      <p className="admin-kicker">Admin · AI assistant</p>
       <h1>Public assistant controls</h1>
       <p className="page-lede">The assistant can answer only from published projects/pages and knowledge documents explicitly marked PUBLIC and includeInAi.</p>
       <div className="content-panel" style={{ maxWidth: 720, marginTop: 32 }}>

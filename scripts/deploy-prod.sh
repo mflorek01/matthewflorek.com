@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: ./scripts/deploy-prod.sh [--ref <commit-or-ref>] [--with-migrations] [--skip-backup]
+Usage: ./scripts/deploy-prod.sh [--ref <commit-or-ref>] [--with-migrations] [--refresh-content] [--skip-backup]
 
 Builds and promotes a reviewed portfolio release in an isolated temporary Git
 worktree. By default, it uses origin/codex/portfolio-redesign when that branch
@@ -11,6 +11,7 @@ exists; otherwise it deploys the current checked-out commit.
 
 --ref <commit-or-ref>  Deploy this local or remote Git reference.
 --with-migrations      Required when the release changes Prisma schema/migrations.
+--refresh-content      Publish the reviewed checked-in overview and PUBLIC project copy.
 --skip-backup          Skip the pre-deploy database backup (not recommended).
 
 The script shows the proposed release and requires the literal word DEPLOY.
@@ -25,6 +26,7 @@ RELEASE_BRANCH="${PORTFOLIO_RELEASE_BRANCH:-codex/portfolio-redesign}"
 RELEASE_REF=""
 WITH_MIGRATIONS=0
 SKIP_BACKUP=0
+REFRESH_CONTENT=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -43,6 +45,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --skip-backup)
       SKIP_BACKUP=1
+      shift
+      ;;
+    --refresh-content)
+      REFRESH_CONTENT=1
       shift
       ;;
     *)
@@ -103,7 +109,7 @@ if [[ -n "$container_id" ]]; then
   running_ref="$(docker inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$container_id" 2>/dev/null || true)"
 fi
 
-if [[ "$target_ref" == "$current_ref" && "$running_ref" == "$target_ref" ]]; then
+if [[ "$target_ref" == "$current_ref" && "$running_ref" == "$target_ref" && "$REFRESH_CONTENT" -eq 0 ]]; then
   if curl --fail --silent --show-error --max-time 5 "http://127.0.0.1:${PORTFOLIO_HOST_PORT:-3101}/api/health?db=1" >/dev/null; then
     printf 'Checkout and running portfolio already match %s. Nothing to deploy.\n' "$target_short"
     exit 0
@@ -155,5 +161,14 @@ PORTFOLIO_ENV_FILE="$ENV_FILE" \
   BACKUP_ROOT="$BACKUP_ROOT" \
   env -u PORTFOLIO_IMAGE -u PORTFOLIO_MIGRATOR_IMAGE -u VCS_REF \
   bash "$release_worktree/scripts/deploy/deploy.sh" "$target_ref"
+
+if [[ "$REFRESH_CONTENT" -eq 1 ]]; then
+  printf 'Publishing the reviewed portfolio content refresh...\n'
+  PORTFOLIO_ENV_FILE="$ENV_FILE" \
+    PORTFOLIO_MIGRATOR_IMAGE="portfolio-redesign-migrator:${target_ref}" \
+    docker compose --env-file "$ENV_FILE" -f "$release_worktree/compose.yml" run --rm \
+      -e CONFIRM_CONTENT_REFRESH=YES \
+      portfolio-migrate node scripts/admin/apply-content-refresh.mjs
+fi
 
 printf 'Portfolio release %s completed successfully.\n' "$target_short"

@@ -12,6 +12,12 @@ export type PortfolioLink = {
   publicationStatus?: PublicationStatus;
 };
 
+export type ProjectDetails = {
+  context?: string;
+  contribution?: string;
+  outcome?: string;
+};
+
 export type PortfolioProject = {
   id: string;
   category: ProjectCategory;
@@ -19,6 +25,7 @@ export type PortfolioProject = {
   publicationStatus: PublicationStatus;
   summary: string;
   tags: string[];
+  details?: ProjectDetails;
   links: PortfolioLink[];
   includeInAi: boolean;
   reviewNotes?: string;
@@ -31,6 +38,7 @@ export type PublicPortfolioProject = {
   title: string;
   summary: string;
   tags: string[];
+  details: ProjectDetails;
   links: Array<{ label: string; url: string }>;
 };
 export type PublicOverview = {
@@ -97,6 +105,15 @@ function publicLink(link: PortfolioLink) {
   return isPublic(link.publicationStatus ?? 'DRAFT') && link.visibility !== 'PRIVATE';
 }
 
+function projectDetails(value: unknown): ProjectDetails {
+  const record = value && typeof value === 'object' ? value as Record<string, unknown> : {};
+  return {
+    context: typeof record.context === 'string' ? record.context.trim() : undefined,
+    contribution: typeof record.contribution === 'string' ? record.contribution.trim() : undefined,
+    outcome: typeof record.outcome === 'string' ? record.outcome.trim() : undefined
+  };
+}
+
 export const publicOverview = isPublic(portfolio.overview.publicationStatus) ? {
   name: portfolio.overview.name,
   headline: portfolio.overview.headline,
@@ -121,13 +138,13 @@ export const publicOverview = isPublic(portfolio.overview.publicationStatus) ? {
 
 export const publicProjects = portfolio.projects
   .filter((project) => isPublic(project.publicationStatus))
-  .map(({ id, category, title, summary, tags, links }) => ({ id, category, title, summary, tags, links: links.filter(publicLink).map(({ label, url }) => ({ label, url })) }));
+  .map(({ id, category, title, summary, tags, details, links }) => ({ id, category, title, summary, tags, details: projectDetails(details), links: links.filter(publicLink).map(({ label, url }) => ({ label, url })) }));
 
 export const aiOverview = { ...publicOverview, includeInAi: isPublic(portfolio.overview.publicationStatus) && portfolio.overview.includeInAi };
 
 export const aiProjects = portfolio.projects
   .filter((project) => isPublic(project.publicationStatus) && project.includeInAi)
-  .map(({ id, category, title, publicationStatus, summary, tags, links, includeInAi }) => ({ id, category, title, publicationStatus, summary, tags, links: links.filter(publicLink).map(({ label, url }) => ({ label, url })), includeInAi }));
+  .map(({ id, category, title, publicationStatus, summary, tags, details, links, includeInAi }) => ({ id, category, title, publicationStatus, summary, tags, details: projectDetails(details), links: links.filter(publicLink).map(({ label, url }) => ({ label, url })), includeInAi }));
 
 export const publicGithubRepositories = portfolio.githubRepositories.filter((repository) => isPublic(repository.publicationStatus)).map(({ name, url }) => ({ name, url }));
 
@@ -144,7 +161,7 @@ function toPublicContent(content: InternalPortfolioContent): PortfolioContent {
       resumeAsset: content.overview.resumeAsset ? { path: content.overview.resumeAsset.path } : null,
       portraitAsset: content.overview.portraitAsset ? { path: content.overview.portraitAsset.path } : null
     },
-    projects: content.projects.map(({ id, category, title, summary, tags, links }) => ({ id, category, title, summary, tags, links: links.map(({ label, url }) => ({ label, url })) })),
+    projects: content.projects.map(({ id, category, title, summary, tags, details, links }) => ({ id, category, title, summary, tags, details: projectDetails(details), links: links.map(({ label, url }) => ({ label, url })) })),
     githubRepositories: content.githubRepositories.map(({ name, url }) => ({ name, url }))
   };
 }
@@ -225,7 +242,8 @@ function projectFromDatabase(row: { slug: string; title: string; summary: string
     title: stringValue(snapshotRecord.title, row.title),
     publicationStatus: 'PUBLIC',
     summary: stringValue(snapshotRecord.summary, row.summary),
-    tags: stringArray(detailRecord.tags),
+    tags: stringArray(snapshotRecord.tags ?? detailRecord.tags),
+    details: projectDetails(detailRecord),
     links,
     includeInAi: preview ? (snapshotRecord.includeInAi === true || row.includeInAi) : snapshotRecord.includeInAi === true,
     reviewNotes: stringValue(snapshotRecord.reviewNotes, row.reviewNotes ?? '') || undefined

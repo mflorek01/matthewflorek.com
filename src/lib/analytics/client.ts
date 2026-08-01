@@ -1,4 +1,4 @@
-import { isAnalyticsDisabled } from './config';
+import { isAnalyticsDisabled, isAnalyticsExcludedPath } from './config';
 import { sanitizeAnalyticsEvent, type AnalyticsEvent, type AnalyticsProperties } from './events';
 
 type UmamiClient = {
@@ -12,7 +12,7 @@ declare global {
 }
 
 export function trackAnalyticsEvent(name: AnalyticsEvent['name'], properties?: AnalyticsProperties) {
-  if (typeof window === 'undefined' || isAnalyticsDisabled()) return false;
+  if (typeof window === 'undefined' || isAnalyticsDisabled() || isAnalyticsExcludedPath(window.location.pathname)) return false;
 
   const event = sanitizeAnalyticsEvent({ name, properties });
   if (!event || !window.umami) return false;

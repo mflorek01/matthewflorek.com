@@ -8,7 +8,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <main>{children}</main>
       <footer className="site-footer">
         <div className="shell footer-inner">
-          <span>Matthew Florek · Data, automation, and AI-assisted systems</span>
+          <span>Matthew Florek · Practical data systems and software</span>
           <a href="/privacy">Privacy &amp; analytics</a>
         </div>
       </footer>

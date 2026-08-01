@@ -44,7 +44,6 @@ export function ProjectExplorer({ projects, emptyTitle, emptyCopy }: { projects:
       </div>
       {projects.length === 0 ? (
         <div className="empty-state">
-          <span className="empty-kicker">Content queue</span>
           <h3>{emptyTitle}</h3>
           <p>{emptyCopy}</p>
         </div>

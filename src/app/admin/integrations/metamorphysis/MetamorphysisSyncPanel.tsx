@@ -41,7 +41,7 @@ export function MetamorphysisSyncPanel() {
   }
 
   return <section className="page-section">
-    <p className="eyebrow">Admin · Integrations</p>
+    <p className="admin-kicker">Admin · Integrations</p>
     <h1>Metamorphysis sync</h1>
     <p className="lede">Import a bounded, read-only project export. Imports stay private or need review until you approve them for local editing.</p>
     <label className="field-label" htmlFor="admin-token">Admin token</label>
@@ -52,6 +52,6 @@ export function MetamorphysisSyncPanel() {
     {result && <pre className="result-panel">{JSON.stringify(result, null, 2)}</pre>}
     <div className="button-row"><button className="button button-secondary" disabled={!token || busy} onClick={() => void loadOverview()}>Refresh sync status</button></div>
     {overview?.state && <div className="result-panel"><strong>Last sync</strong><p>Status: {overview.state.status}</p><p>Finished: {overview.state.lastFinishedAt ?? 'Not yet'}</p>{overview.state.errorMessage && <p>Error: {overview.state.errorMessage}</p>}</div>}
-    {overview?.snapshot && <div className="project-grid">{overview.snapshot.projectLinks.map((link) => <article className="project-card" key={link.id}><h2>{link.importedTitle ?? link.externalProjectId}</h2><p>Source ID: {link.externalProjectId}</p><p>Changed fields: {link.importedPayload.diff?.map((change) => change.field).join(', ') || 'None detected'}</p><p>Conflicts: {link.importedPayload.conflicts?.map((conflict) => conflict.field).join(', ') || 'None'}</p><p>Local overrides: {Object.keys(link.project?.override?.fields ?? {}).join(', ') || 'None'}</p>{link.importedPayload.reviewRequired && <p className="eyebrow">Review required</p>}{link.projectId && <button className="button button-secondary" disabled={busy} onClick={() => void approve(link.externalProjectId)}>Approve for local editing</button>}</article>)}</div>}
+    {overview?.snapshot && <div className="project-grid">{overview.snapshot.projectLinks.map((link) => <article className="project-card" key={link.id}><h2>{link.importedTitle ?? link.externalProjectId}</h2><p>Source ID: {link.externalProjectId}</p><p>Changed fields: {link.importedPayload.diff?.map((change) => change.field).join(', ') || 'None detected'}</p><p>Conflicts: {link.importedPayload.conflicts?.map((conflict) => conflict.field).join(', ') || 'None'}</p><p>Local overrides: {Object.keys(link.project?.override?.fields ?? {}).join(', ') || 'None'}</p>{link.importedPayload.reviewRequired && <p><strong>Review required</strong></p>}{link.projectId && <button className="button button-secondary" disabled={busy} onClick={() => void approve(link.externalProjectId)}>Approve for local editing</button>}</article>)}</div>}
   </section>;
 }

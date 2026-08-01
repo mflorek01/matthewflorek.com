@@ -49,6 +49,7 @@ services:
     networks:
       - portfolio_private
       - portfolio_egress
+      - portfolio_umami_private
     healthcheck:
       test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/api/health?db=1').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
       interval: 15s
@@ -102,3 +103,6 @@ networks:
     internal: true
   portfolio_egress:
     name: portfolio_egress
+  portfolio_umami_private:
+    external: true
+    name: portfolio_umami_private

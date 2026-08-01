@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { trackAnalyticsEvent } from '@/lib/analytics/client';
@@ -32,7 +33,7 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="shell header-inner">
         <Link href="/" className="brand" onClick={closeMenu} aria-label="Matthew Florek home">
-          <span className="brand-mark" aria-hidden="true">MF</span>
+          <Image className="brand-mark" src="/assets/matthew-florek-orbit-mark.svg" width={38} height={38} alt="" aria-hidden="true" />
           <span>Matthew Florek</span>
         </Link>
         <button

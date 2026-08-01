@@ -31,11 +31,12 @@ function staticEvidence(): AiEvidence[] {
   }
   for (const project of aiProjects) {
     const sourceUrl = project.links.map(publicLinkUrl).find(Boolean);
+    const detailText = [project.details.context, project.details.contribution, project.details.outcome].filter(Boolean).join(' ');
     result.push({
       id: `project:${project.id}`,
       title: project.title,
       sourceType: 'project',
-      excerpt: cleanText(`${project.summary} Tags: ${project.tags.join(', ')}`),
+      excerpt: cleanText(`${project.summary} ${detailText} Tags: ${project.tags.join(', ')}`),
       sourceUrl,
       projectSlug: project.id
     });

@@ -1,5 +1,5 @@
 export const siteConfig = {
   name: 'Matthew Florek',
-  description: 'Data analytics, business intelligence, and AI-assisted workflows.',
+  description: 'Practical data systems, automation, and software built around real operational problems.',
   locale: 'en-US'
 } as const;

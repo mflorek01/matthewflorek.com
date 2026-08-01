@@ -21,9 +21,9 @@
       }
     ],
     "name": "Matthew Florek",
-    "headline": "Data analytics, business intelligence, and AI-assisted workflows",
-    "shortBio": "I build practical systems that turn messy information and repetitive work into clearer decisions and more reliable workflows. My work sits at the intersection of data analysis, automation, operations, and AI-assisted software development.",
-    "longBio": "My background combines finance, business analytics, data quality, workflow automation, and hands-on systems building. I enjoy taking an ambiguous operational problem, finding the structure inside it, and turning that structure into a tool, dataset, dashboard, or repeatable process that people can actually use.",
+    "headline": "Data analysis with a builder's range",
+    "shortBio": "I am a data analyst who also builds the tools around the analysis: automated workflows, operational systems, geospatial work, and full-stack AI products.",
+    "longBio": "My background is in finance and business analytics, with experience turning difficult operational information into usable datasets, reports, and repeatable processes. Alongside that work, I build software and experiments of my own—from map-based Android tools to AI products. I like work that rewards both careful analysis and the patience to make a system useful in practice.",
     "education": [
       {
         "credential": "B.S. in Finance",
@@ -91,9 +91,9 @@
       "provenance": "Recovered from prior public site commit e8b37db; Matthew should confirm that the document is current and still intended for public distribution."
     },
     "portraitAsset": {
-      "path": "/assets/matthew-florek-headshot.png",
-      "publicationStatus": "NEEDS_REVIEW",
-      "provenance": "Recovered from prior public site commit e8b37db; Matthew should confirm the preferred portrait and usage rights."
+      "path": "/assets/matthew-florek-headshot-2026.jpg",
+      "publicationStatus": "PUBLIC",
+      "provenance": "Selected and supplied by Matthew Florek for the 2026 portfolio refresh."
     },
     "includeInAi": true
   },
@@ -104,7 +104,8 @@
       "title": "Operations Grant Database",
       "publicationStatus": "PUBLIC",
       "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_operations_grant_database"],
-      "summary": "An Excel- and Power Query-based operational data system that brought fragmented grant information into a more consistent structure for reporting and downstream analysis.",
+      "summary": "An Excel and Power Query system that organized fragmented grant information for reporting and analysis.",
+      "details": {"context": "Grant information arrived in a form that made consistent reporting difficult.", "contribution": "I shaped the data model and built repeatable preparation steps in Excel and Power Query.", "outcome": "The work created a clearer, more consistent foundation for reporting and downstream analysis."},
       "tags": ["Excel", "Power Query", "data modeling", "data quality", "grants", "reporting"],
       "links": [],
       "includeInAi": false,
@@ -116,7 +117,8 @@
       "title": "Grant Application Dashboard",
       "publicationStatus": "PUBLIC",
       "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_grant_application_dashboard"],
-      "summary": "A reporting dashboard designed to give teams a clearer view of grant application activity, status, and trends using a structured data model.",
+      "summary": "A reporting dashboard that made grant application activity, status, and trends easier to review.",
+      "details": {"context": "Teams needed a practical way to review application activity and status over time.", "contribution": "I organized the underlying data and shaped the reporting view around the questions the team needed to answer.", "outcome": "The dashboard provided a more consistent way to inspect activity, status, and trends."},
       "tags": ["Excel", "dashboard development", "Power Query", "data modeling", "operations"],
       "links": [],
       "includeInAi": false,
@@ -128,7 +130,8 @@
       "title": "Grant Evaluation Workflow Automation",
       "publicationStatus": "PUBLIC",
       "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_grant_evaluation_power_automate_flow"],
-      "summary": "An automation workflow that reduced repetitive evaluation-data handling across a legacy web process and made the extraction step more repeatable.",
+      "summary": "An automation workflow that made repetitive evaluation-data extraction from a legacy web process more repeatable.",
+      "details": {"context": "A legacy web process required repeated handling of evaluation data.", "contribution": "I built an automation workflow using Power Automate Desktop and JavaScript to support the extraction step.", "outcome": "The process became more repeatable and reduced manual handling of the same steps."},
       "tags": ["Power Automate Desktop", "JavaScript", "workflow automation", "data extraction", "legacy systems"],
       "links": [],
       "includeInAi": false,
@@ -140,7 +143,8 @@
       "title": "Title I Comparability Evaluation",
       "publicationStatus": "PUBLIC",
       "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_title_i_comparability_evaluator"],
-      "summary": "A rules-based data workflow supporting a federal education compliance review process by separating straightforward cases from those needing specialist attention.",
+      "summary": "A rules-based workflow that supported an education compliance review by sorting straightforward cases from those needing attention.",
+      "details": {"context": "A compliance review process involved applying consistent rules to case data.", "contribution": "I translated review logic into a structured Power Query workflow that could separate cases by the next step needed.", "outcome": "The workflow gave reviewers a clearer starting point for handling routine and exception cases."},
       "tags": ["Power Query", "compliance", "federal programs", "business rules", "automation"],
       "links": [],
       "includeInAi": false,
@@ -152,7 +156,8 @@
       "title": "School District Boundary and Census Analysis",
       "publicationStatus": "PUBLIC",
       "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_new_1778635265340", "mflorek01/metamorphysis/data/mega-resume.json project_walnut_grove_census_boundary_update"],
-      "summary": "A geospatial analysis workflow combining boundary data and operational information to support school-district reporting and planning.",
+      "summary": "A geospatial workflow combining boundary and operational data for school-district reporting and planning.",
+      "details": {"context": "Reporting and planning questions depended on understanding how geographic boundaries related to other data.", "contribution": "I used QGIS and data-validation steps to compare boundary information with operational records.", "outcome": "The resulting analysis supported clearer geographic reporting and planning."},
       "tags": ["QGIS", "GIS", "geospatial analysis", "Census", "data validation"],
       "links": [],
       "includeInAi": false,
@@ -164,7 +169,8 @@
       "title": "Metamorphysis.ai",
       "publicationStatus": "PUBLIC",
       "provenance": ["Public site https://metamorphysis.ai", "mflorek01/metamorphysis README.md, read-only inspection"],
-      "summary": "A resume-intelligence workspace for turning user-owned career sources into structured, targeted, ATS-aware documents and AI-assisted career workflows.",
+      "summary": "A resume-intelligence workspace that turns user-owned career information into structured documents and focused career workflows.",
+      "details": {"context": "Career information is often spread across documents and difficult to reuse consistently.", "contribution": "I built a workspace for organizing source material and using it to support targeted resume and career workflows.", "outcome": "The product gives users a more structured way to work with their own experience and documents."},
       "tags": ["AI", "Next.js", "TypeScript", "PostgreSQL", "resume systems", "AI-assisted development"],
       "links": [
         {
@@ -184,6 +190,7 @@
       "publicationStatus": "PUBLIC",
       "provenance": ["mflorek01/metamorphysis/data/mega-resume.json project_bettrgrants_platform"],
       "summary": "A grant-compliance platform concept focused on making grant workflows, structured data, and automation easier to manage.",
+      "details": {"context": "Grant work combines compliance requirements, structured information, and recurring workflows.", "contribution": "I explored a product structure that brings those pieces together in one system.", "outcome": "The concept focuses on making grant work easier to organize and support with automation."},
       "tags": ["SaaS", "TypeScript", "PostgreSQL", "AI-assisted development", "compliance", "workflow automation"],
       "links": [],
       "includeInAi": true,
@@ -195,7 +202,8 @@
       "title": "HyperMap",
       "publicationStatus": "PUBLIC",
       "provenance": ["Matthew's implementation brief in the portfolio redesign request"],
-      "summary": "An Android map-navigation app concept with an embedded AI assistant intended to provide more useful, conversational help during navigation.",
+      "summary": "An Android map-navigation app with an embedded AI assistant for conversational help during navigation.",
+      "details": {"context": "Navigation can require more than a fixed turn-by-turn instruction, especially when a user wants to ask a contextual question.", "contribution": "I designed and built an Android map-navigation app with an embedded AI assistant.", "outcome": "The project explores how conversational assistance can sit alongside map-based navigation."},
       "tags": ["Android", "AI assistant", "maps", "mobile development", "navigation"],
       "links": [],
       "includeInAi": true,

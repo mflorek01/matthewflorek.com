@@ -4,6 +4,7 @@ import {
   getAnalyticsMode,
   getAnalyticsPreference,
   isAnalyticsDisabled,
+  isAnalyticsExcludedPath,
   setAnalyticsDisabled
 } from '../src/lib/analytics/config';
 
@@ -135,5 +136,11 @@ describe('analytics configuration', () => {
 
     expect(isAnalyticsDisabled()).toBe(false);
     expect(() => setAnalyticsDisabled(true)).not.toThrow();
+  });
+
+  it('excludes private admin routes from portfolio analytics', () => {
+    expect(isAnalyticsExcludedPath('/admin')).toBe(true);
+    expect(isAnalyticsExcludedPath('/admin/analytics')).toBe(true);
+    expect(isAnalyticsExcludedPath('/work')).toBe(false);
   });
 });

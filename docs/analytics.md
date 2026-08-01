@@ -38,6 +38,12 @@ Public UI can adopt `TrackedLink`, `TrackedButton`, or call `trackAnalyticsEvent
 
 ## Dashboard setup
 
+## Private admin analytics
+
+The portfolio exposes aggregated analytics at `/admin/analytics`, behind the normal portfolio admin session. The server calls the private Umami service over Docker networking; the browser never receives the Umami username, password, API token, or visitor-level records. The public analytics dashboard remains blocked at the edge.
+
+Set these server-only values in production `.env`: `UMAMI_API_URL=http://umami:3000`, `UMAMI_WEBSITE_ID=<production website id>`, `UMAMI_API_USERNAME=<Umami administrator username>`, and `UMAMI_API_PASSWORD=<Umami administrator password>`. If any value is missing, the page fails closed with a setup message. Do not use `NEXT_PUBLIC_*` names for these credentials. The server uses Umami's website stats, metrics, and `/api/websites/:websiteId/active` endpoints; Umami's `totaltime` is already measured in seconds, so average visit duration is calculated as `totaltime / visits`.
+
 Create one Umami website for the production portfolio and use a separate website or disabled local configuration for development. Use the current official Docker image tag `ghcr.io/umami-software/umami:3.2.0`. Keep session replay and heatmaps unconfigured. The initial dashboard should include visitors, sessions, page views, referrers, campaign parameters, device category, browser, operating system, country/region, project opens, source clicks, resume downloads, contact CTA clicks, and AI-chat starts/completions/rate limits.
 
 At launch, exclude admin routes, development traffic, health checks, uptime monitors, internal jobs, and known bot traffic. Keep Umami bot filtering enabled. Do not enable city-level reporting until there is a clear reason to accept the additional precision.
