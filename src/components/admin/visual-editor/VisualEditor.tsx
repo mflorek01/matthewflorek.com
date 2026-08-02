@@ -264,6 +264,10 @@ function SortableBlock({
         aria-label={`Select ${blockName(block.type)} block`}
         onClick={onSelect}
         onKeyDown={(event) => {
+          // The canvas is keyboard-selectable, but text-editing controls inside
+          // it must retain normal typing behavior. In particular, a space is
+          // meaningful text here, not a canvas shortcut.
+          if (event.target instanceof HTMLElement && event.target.closest('[contenteditable="true"]')) return;
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             onSelect();

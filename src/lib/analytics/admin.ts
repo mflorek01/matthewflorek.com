@@ -1,6 +1,34 @@
+import { createHash } from "node:crypto";
+
 export type AnalyticsRow = { label: string; value: number };
 export type AnalyticsTrendPoint = { date: string; visitors: number; visits: number; pageviews: number };
 export type AnalyticsRetentionCohort = { date: string; visitors: number; day1: number | null; day7: number | null };
+export type AnalyticsVisitorActivity = {
+  createdAt: string;
+  path: string;
+  referrer: string;
+  event: string;
+};
+export type AnalyticsVisitor = {
+  recordKey: string;
+  browser: string;
+  os: string;
+  device: string;
+  screen: string;
+  language: string;
+  country: string;
+  region: string;
+  city: string;
+  firstAt: string;
+  lastAt: string;
+  visits: number;
+  views: number;
+  events: number;
+  totalTimeSeconds: number;
+  automation: "likely" | "possible" | "lower";
+  signals: string[];
+  activity: AnalyticsVisitorActivity[];
+};
 export type AnalyticsSummary = {
   windowLabel: string;
   stats: {
@@ -20,6 +48,7 @@ export type AnalyticsSummary = {
   topPages: AnalyticsRow[];
   topReferrers: AnalyticsRow[];
   topEvents: AnalyticsRow[];
+  visitors: AnalyticsVisitor[];
   error?: string;
 };
 type UmamiConfig = { baseUrl: string; websiteId: string; username: string; password: string };
@@ -87,12 +116,84 @@ function weightedRetentionRate(cohorts: AnalyticsRetentionCohort[], key: "day1" 
   return Math.round((eligible.reduce((sum, cohort) => sum + cohort.visitors * (cohort[key] ?? 0), 0) / denominator) * 10) / 10;
 }
 
+const textValue = (value: unknown, fallback = "—") => typeof value === "string" && value.trim() ? value.trim().slice(0, 120) : fallback;
+
+function visitorRecordKey(id: unknown, index: number) {
+  const seed = typeof id === "string" && id ? id : `missing-${index}`;
+  return createHash("sha256").update(seed).digest("hex").slice(0, 10).toUpperCase();
+}
+
+function classifyVisitor(session: Record<string, unknown>, activity: AnalyticsVisitorActivity[]) {
+  const views = numeric(session.views);
+  const events = numeric(session.events);
+  const browser = textValue(session.browser, "unknown").toLowerCase();
+  const os = textValue(session.os, "unknown").toLowerCase();
+  const screen = textValue(session.screen, "unknown").toLowerCase();
+  const signals: string[] = [];
+  const onePageNoInteraction = views <= 1 && events === 0;
+  if (onePageNoInteraction) signals.push("One pageview and no tracked interaction");
+  if (browser === "ios" && screen === "1920x1080") signals.push("Unusual iOS and desktop-sized viewport combination");
+  if (os === "linux" && screen === "800x600") signals.push("Small Linux viewport commonly seen in automation");
+  if (!activity.length) signals.push("No page activity details returned");
+  if (events > 0 || views > 1) signals.push("Repeated browsing or interaction activity");
+  const likely = signals.some((signal) => signal.includes("Unusual iOS") || signal.includes("Small Linux"));
+  return { automation: likely ? "likely" as const : onePageNoInteraction ? "possible" as const : "lower" as const, signals };
+}
+
+function normalizeVisitorActivity(value: unknown): AnalyticsVisitorActivity[] {
+  if (!Array.isArray(value)) return [];
+  return value.slice(0, 200).flatMap((row) => {
+    if (!row || typeof row !== "object") return [];
+    const item = row as Record<string, unknown>;
+    const createdAt = typeof item.createdAt === "string" ? item.createdAt : "";
+    if (!createdAt) return [];
+    return [{
+      createdAt,
+      path: textValue(item.urlPath, "(unknown path)"),
+      referrer: textValue(item.referrerDomain, "—"),
+      event: textValue(item.eventName, "pageview"),
+    }];
+  });
+}
+
+function normalizeVisitors(value: unknown): AnalyticsVisitor[] {
+  if (!value || typeof value !== "object") return [];
+  const data = Array.isArray(value) ? value : (value as Record<string, unknown>).data;
+  if (!Array.isArray(data)) return [];
+  return data.slice(0, 100).flatMap((row, index) => {
+    if (!row || typeof row !== "object") return [];
+    const session = row as Record<string, unknown>;
+    const activity = normalizeVisitorActivity(session.activity);
+    const classification = classifyVisitor(session, activity);
+    return [{
+      recordKey: visitorRecordKey(session.id, index),
+      browser: textValue(session.browser, "unknown"),
+      os: textValue(session.os, "unknown"),
+      device: textValue(session.device, "unknown"),
+      screen: textValue(session.screen, "unknown"),
+      language: textValue(session.language, "unknown"),
+      country: textValue(session.country),
+      region: textValue(session.region),
+      city: textValue(session.city),
+      firstAt: textValue(session.firstAt, ""),
+      lastAt: textValue(session.lastAt, ""),
+      visits: numeric(session.visits),
+      views: numeric(session.views),
+      events: numeric(session.events),
+      totalTimeSeconds: numeric(session.totaltime),
+      ...classification,
+      activity,
+    }];
+  });
+}
+
 export function normalizeAnalyticsSummary(input: {
   stats: Record<string, unknown>;
   active: Record<string, unknown> | null;
   pages: UmamiResponse;
   referrers: UmamiResponse;
   events: UmamiResponse;
+  visitors?: unknown;
   trend?: AnalyticsTrendPoint[];
   retention?: unknown;
 }): AnalyticsSummary {
@@ -118,6 +219,7 @@ export function normalizeAnalyticsSummary(input: {
     topPages: rows(input.pages),
     topReferrers: rows(input.referrers),
     topEvents: rows(input.events),
+    visitors: normalizeVisitors(input.visitors),
   };
 }
 
@@ -148,6 +250,7 @@ function emptySummary(): Omit<AnalyticsSummary, "error"> {
     topPages: [],
     topReferrers: [],
     topEvents: [],
+    visitors: [],
   };
 }
 function rangeForDay(day: number, endAt: number) {
@@ -170,6 +273,26 @@ async function getDailyTrend(config: UmamiConfig, token: string, endAt: number):
   }).sort((left, right) => left.date.localeCompare(right.date));
 }
 
+async function getVisitors(config: UmamiConfig, token: string, range: { startAt: string; endAt: string }) {
+  const response = await umamiFetch(config, token, `/websites/${config.websiteId}/sessions`, { ...range, page: "1", pageSize: "100" });
+  if (!response || typeof response !== "object" || !Array.isArray((response as Record<string, unknown>).data)) return { data: [] };
+  const data = (response as Record<string, unknown>).data as Array<Record<string, unknown>>;
+  const visitors = await Promise.all(data.map(async (session) => {
+    const id = typeof session.id === "string" ? session.id : "";
+    if (!id) return { ...session, activity: [] };
+    try {
+      const [details, activity] = await Promise.all([
+        umamiFetch(config, token, `/websites/${config.websiteId}/sessions/${encodeURIComponent(id)}`),
+        umamiFetch(config, token, `/websites/${config.websiteId}/sessions/${encodeURIComponent(id)}/activity`, range),
+      ]);
+      return { ...session, ...(details && !Array.isArray(details) ? details : {}), activity };
+    } catch {
+      return { ...session, activity: [] };
+    }
+  }));
+  return { data: visitors };
+}
+
 export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   const empty = emptySummary();
   const config = getUmamiAdminConfig();
@@ -186,12 +309,13 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
     if (!loginResponse.ok) throw new Error("Umami credentials were rejected");
     const login = (await loginResponse.json()) as { token?: string };
     if (!login.token) throw new Error("Umami did not return an API token");
-    const [stats, active, pages, referrers, events, trend, retention] = await Promise.all([
+    const [stats, active, pages, referrers, events, visitors, trend, retention] = await Promise.all([
       umamiFetch(config, login.token, `/websites/${config.websiteId}/stats`, range),
       umamiFetch(config, login.token, `/websites/${config.websiteId}/active`),
       umamiFetch(config, login.token, `/websites/${config.websiteId}/metrics`, { ...range, type: "path", limit: "8" }),
       umamiFetch(config, login.token, `/websites/${config.websiteId}/metrics`, { ...range, type: "referrer", limit: "8" }),
       umamiFetch(config, login.token, `/websites/${config.websiteId}/metrics`, { ...range, type: "event", limit: "8" }),
+      getVisitors(config, login.token, range),
       getDailyTrend(config, login.token, endAt),
       umamiPost(config, login.token, "/reports/retention", {
         websiteId: config.websiteId,
@@ -200,7 +324,7 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
         parameters: { startDate: new Date(endAt - 30 * 24 * 60 * 60 * 1000).toISOString(), endDate: new Date(endAt).toISOString(), timezone: "UTC" },
       }),
     ]);
-    return normalizeAnalyticsSummary({ stats: stats as Record<string, unknown>, active: active as Record<string, unknown>, pages, referrers, events, trend, retention });
+    return normalizeAnalyticsSummary({ stats: stats as Record<string, unknown>, active: active as Record<string, unknown>, pages, referrers, events, visitors, trend, retention });
   } catch (error) {
     return { ...empty, error: error instanceof Error ? error.message : "Analytics is temporarily unavailable." };
   }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAnalyticsSummary, type AnalyticsTrendPoint } from "@/lib/analytics/admin";
+import { AnalyticsCockpit } from "@/components/admin/AnalyticsCockpit";
 
 function Metric({ label, value, detail }: { label: string; value: string | number; detail: string }) {
   return (
@@ -86,7 +87,8 @@ export default async function AdminAnalyticsPage() {
         <div className="admin-card analytics-chart-card"><TrendChart points={summary.trend} /></div>
         <Retention summary={summary} />
         <div className="admin-grid"><Table title="Top pages" rows={summary.topPages} /><Table title="Top referrers" rows={summary.topReferrers} /><Table title="Events" rows={summary.topEvents} /></div>
-        <p className="admin-help-text">Only aggregate counts reach this page. Visitor identifiers, credentials, and raw event records never reach the portfolio app. Unique visitors are anonymous Umami counts, not a promise that one person can be recognized across browsers or devices.</p>
+        <AnalyticsCockpit visitors={summary.visitors} />
+        <p className="admin-help-text">This private page receives bounded, anonymous session summaries and activity paths from Umami; credentials, raw IP addresses, and free-form visitor input never reach the browser. Unique visitors are anonymous Umami counts, not a promise that one person can be recognized across browsers or devices.</p>
       </>}
     </article>
   );

@@ -71,5 +71,43 @@
 .analytics-cohort-list { display: grid; gap: 7px; }
 .analytics-cohort-row { display: grid; grid-template-columns: 1fr repeat(3, auto); gap: 14px; align-items: center; padding: 10px 12px; border-top: 1px solid #e2e8f0; color: #607080; font-size: .8rem; }
 .analytics-cohort-row span:first-child { color: #10213f; font-weight: 700; }
+.analytics-cockpit { margin-top: 18px; padding: 25px; border: 1px solid #d9e1eb; border-radius: 13px; background: #fff; box-shadow: 0 10px 28px rgba(0, 19, 63, .045); }
+.analytics-cockpit-heading { align-items: start; margin-bottom: 18px; }
+.analytics-cockpit-heading h2, .analytics-activity-stream h3 { margin-bottom: 6px; }
+.analytics-cockpit-heading p, .analytics-activity-stream p { margin: 0; }
+.analytics-cockpit-count { color: #2350d7; font-size: .8rem; font-weight: 800; white-space: nowrap; }
+.analytics-cockpit-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(190px, .35fr); gap: 12px; margin-bottom: 18px; }
+.analytics-cockpit-controls label { display: grid; gap: 6px; color: #42536b; font-size: .78rem; font-weight: 700; }
+.analytics-cockpit-controls input, .analytics-cockpit-controls select { width: 100%; padding: 10px 11px; border: 1px solid #cdd8e5; border-radius: 7px; color: #10213f; background: #fbfcfe; font: inherit; font-weight: 400; }
+.analytics-cockpit-grid { display: grid; grid-template-columns: minmax(260px, .75fr) minmax(0, 1.25fr); gap: 16px; }
+.analytics-visitor-roster { display: grid; align-content: start; gap: 8px; max-height: 620px; overflow: auto; padding-right: 4px; }
+.analytics-visitor-row { display: grid; gap: 5px; width: 100%; padding: 13px; border: 1px solid #dfe6ef; border-left: 4px solid #b8c7d7; border-radius: 9px; color: #607080; background: #fbfcfe; font: inherit; text-align: left; cursor: pointer; }
+.analytics-visitor-row:hover, .analytics-visitor-row.is-selected { border-color: #69cce2; background: #f1fbfd; box-shadow: 0 0 0 2px #d8f2f7; }
+.analytics-visitor-row.analytics-visitor-row-signal-possible { border-left-color: #c77b21; }
+.analytics-visitor-row.analytics-visitor-row-signal-likely { border-left-color: #b64455; }
+.analytics-visitor-row-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.analytics-visitor-row strong, .analytics-visitor-row-top strong { color: #10213f; font-size: .83rem; }
+.analytics-visitor-row > span:not(.analytics-visitor-row-top) { font-size: .75rem; }
+.analytics-visitor-row small { color: #8492a2; font-size: .68rem; }
+.analytics-signal { display: inline-flex; width: fit-content; padding: 4px 7px; border: 1px solid #b8c7d7; border-radius: 999px; color: #2350d7; background: #eef5ff; font-size: .66rem; font-weight: 800; white-space: nowrap; }
+.analytics-signal-possible { color: #8a5417; border-color: #e4bd86; background: #fff7e9; }
+.analytics-signal-likely { color: #963b4c; border-color: #e3aab5; background: #fff1f3; }
+.analytics-visitor-detail { min-width: 0; padding: 18px; border: 1px solid #dfe6ef; border-radius: 10px; background: #fff; }
+.analytics-detail-heading { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+.analytics-detail-heading h3 { margin: 3px 0 0; color: #00133f; font-size: 1.35rem; }
+.analytics-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.analytics-facts div { min-width: 0; padding: 11px; border-radius: 8px; background: #f5f8fc; }
+.analytics-facts dt { color: #607080; font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+.analytics-facts dd { margin: 4px 0 0; overflow-wrap: anywhere; color: #10213f; font-size: .8rem; }
+.analytics-signal-list { display: grid; gap: 7px; margin-top: 16px; }
+.analytics-signal-list strong { color: #10213f; font-size: .78rem; }
+.analytics-signal-list span { padding: 8px 10px; border-left: 3px solid #c77b21; color: #607080; background: #fffaf1; font-size: .75rem; }
+.analytics-activity-stream { margin-top: 25px; }
+.analytics-activity-list { display: grid; max-height: 520px; overflow: auto; border-top: 1px solid #e2e8f0; }
+.analytics-activity-row { display: grid; grid-template-columns: 155px 100px minmax(120px, .7fr) minmax(120px, 1fr); gap: 10px; align-items: center; padding: 10px 8px; border: 0; border-bottom: 1px solid #e2e8f0; color: #607080; background: #fff; font: inherit; font-size: .74rem; text-align: left; cursor: pointer; }
+.analytics-activity-row:hover, .analytics-activity-row.is-selected { background: #f1fbfd; box-shadow: inset 3px 0 #2350d7; }
+.analytics-activity-time { color: #8492a2; }
+.analytics-activity-record { color: #2350d7; font-weight: 800; }
+.analytics-cockpit-note { margin: 17px 0 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-@media (max-width: 720px) { .admin-main { width: min(100% - 28px, 1180px); padding-top: 32px; } .admin-heading { align-items: start; flex-direction: column; } .admin-grid, .admin-form-grid, .analytics-retention-grid { grid-template-columns: 1fr; } .admin-link-row { grid-template-columns: 30px 1fr; } .admin-link-row input:last-child { grid-column: 2; } .admin-list li { align-items: start; flex-direction: column; } .analytics-chart-heading { flex-direction: column; } .analytics-legend { justify-content: start; } .analytics-cohort-row { grid-template-columns: 1fr 1fr; gap: 5px 10px; } }
+@media (max-width: 720px) { .admin-main { width: min(100% - 28px, 1180px); padding-top: 32px; } .admin-heading { align-items: start; flex-direction: column; } .admin-grid, .admin-form-grid, .analytics-retention-grid, .analytics-cockpit-grid, .analytics-cockpit-controls { grid-template-columns: 1fr; } .admin-link-row { grid-template-columns: 30px 1fr; } .admin-link-row input:last-child { grid-column: 2; } .admin-list li { align-items: start; flex-direction: column; } .analytics-chart-heading { flex-direction: column; } .analytics-legend { justify-content: start; } .analytics-cohort-row { grid-template-columns: 1fr 1fr; gap: 5px 10px; } .analytics-facts { grid-template-columns: 1fr; } .analytics-activity-row { grid-template-columns: 1fr 1fr; gap: 5px 10px; } }
