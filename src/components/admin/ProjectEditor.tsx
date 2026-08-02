@@ -267,7 +267,6 @@ export function ProjectEditor({
           <Link href="/admin" className="admin-back">
             ← Workspace
           </Link>
-          <p className="admin-kicker">Project editor</p>
           <h1>{project.title}</h1>
         </div>
         <div className="admin-actions">

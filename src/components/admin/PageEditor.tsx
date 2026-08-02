@@ -9,6 +9,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import VisualEditor from "@/components/admin/visual-editor/VisualEditor";
+import {
+  defaultVisualDocument,
+  parseVisualPageDocument,
+  type VisualPageDocument,
+} from "@/lib/visual-editor";
 type Block = {
   id: string;
   blockKey: string;
@@ -21,6 +27,7 @@ type Block = {
 type EditableBlock = Block & { dataText: string };
 type Page = {
   id: string;
+  slug: string;
   title: string;
   isPublished: boolean;
   blocks: Block[];
@@ -42,6 +49,20 @@ type OverviewData = {
   [key: string]: unknown;
 };
 type OverviewEnvelope = { overview?: OverviewData; [key: string]: unknown };
+
+function overviewForDefaults(block: Block | undefined) {
+  if (!block?.data || typeof block.data !== "object") return undefined;
+  const envelope = block.data as OverviewEnvelope;
+  const value = envelope.overview && typeof envelope.overview === "object"
+    ? envelope.overview
+    : envelope;
+  return {
+    name: typeof value.name === "string" ? value.name : undefined,
+    headline: typeof value.headline === "string" ? value.headline : undefined,
+    shortBio: typeof value.shortBio === "string" ? value.shortBio : undefined,
+    longBio: typeof value.longBio === "string" ? value.longBio : undefined,
+  };
+}
 function clientId() {
   return `c${Date.now().toString(36)}${Math.random().toString(36).slice(2, 12)}`;
 }
@@ -257,9 +278,17 @@ function SortableBlock({
   );
 }
 export function PageEditor({ page }: { page: Page }) {
+  const storedVisual = page.blocks.find((block) => block.kind === "visual-layout");
+  const overviewBlock = page.blocks.find(
+    (block) => block.kind === "overview" || block.blockKey === "overview-content",
+  );
   const [title, setTitle] = useState(page.title);
+  const [visualDocument, setVisualDocument] = useState<VisualPageDocument>(
+    () => parseVisualPageDocument(storedVisual?.data)
+      ?? defaultVisualDocument(page.slug, overviewForDefaults(overviewBlock)),
+  );
   const [blocks, setBlocks] = useState<EditableBlock[]>(
-    page.blocks.map((b) => ({
+    page.blocks.filter((block) => block.kind !== "visual-layout").map((b) => ({
       ...b,
       dataText: JSON.stringify(b.data, null, 2),
     })),
@@ -321,11 +350,22 @@ export function PageEditor({ page }: { page: Page }) {
     setBusy(true);
     setMessage("");
     try {
-      const parsed = blocks.map(({ dataText, ...block }, sortOrder) => ({
-        ...block,
+      const parsed = blocks.map(({ dataText, blockKey, kind, visibility, includeInAi }, sortOrder) => ({
+        blockKey,
+        kind,
+        visibility,
+        includeInAi,
         sortOrder,
         data: JSON.parse(dataText) as Record<string, unknown>,
       }));
+      parsed.push({
+        blockKey: "visual-layout",
+        kind: "visual-layout",
+        sortOrder: parsed.length,
+        visibility: "PUBLIC",
+        includeInAi: false,
+        data: visualDocument,
+      });
       const r = await fetch(`/api/admin/pages/${page.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -349,6 +389,11 @@ export function PageEditor({ page }: { page: Page }) {
       setBusy(false);
     }
   }
+  const previewPath = page.slug === "work"
+    ? "/work?preview=1"
+    : page.slug === "ai"
+      ? "/ai?preview=1"
+      : "/?preview=1";
   return (
     <div>
       <div className="admin-heading">
@@ -356,13 +401,12 @@ export function PageEditor({ page }: { page: Page }) {
           <Link href="/admin" className="admin-back">
             ← Workspace
           </Link>
-          <p className="admin-kicker">Page editor</p>
           <h1>{page.title}</h1>
         </div>
         <div className="admin-actions">
           <Link
             className="admin-button admin-button-muted"
-            href="/?preview=1"
+            href={previewPath}
             target="_blank"
           >
             Preview draft
@@ -388,45 +432,23 @@ export function PageEditor({ page }: { page: Page }) {
           {message}
         </p>
       )}
-      <div className="admin-card admin-editor">
-        <p className="admin-help-text">
-          Save draft keeps changes private. Publish makes them public.
-        </p>
-        <label>
-          Page title
-          <input value={title} onChange={(e) => setTitle(e.target.value)} />
-        </label>
+      <p className="admin-help-text">Save draft keeps changes private. Preview checks the draft on the real site. Publish makes the current draft public.</p>
+      <VisualEditor document={visualDocument} onDocumentChange={setVisualDocument} pageTitle={title} onPageTitleChange={setTitle} />
+      <details className="admin-card admin-editor admin-advanced-data">
+        <summary>Dynamic content and advanced data</summary>
+        <p className="admin-help-text">Skills, profile links, résumé paths, and other managed data used by visual blocks live here. Most layout and copy changes should be made in the visual editor above.</p>
         <div className="admin-card-heading">
-          <h2>Content blocks</h2>
-          <button
-            type="button"
-            className="admin-button admin-button-muted"
-            onClick={addBlock}
-          >
-            Add block
-          </button>
+          <h2>Managed data blocks</h2>
+          <button type="button" className="admin-button admin-button-muted" onClick={addBlock}>Add data block</button>
         </div>
         <DndContext collisionDetection={closestCenter} onDragEnd={drag}>
-          <SortableContext
-            items={blocks.map((b) => b.id)}
-            strategy={verticalListSortingStrategy}
-          >
+          <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
             {blocks.map((block, index) => (
-              <SortableBlock
-                key={block.id}
-                block={{ ...block, sortOrder: index }}
-                index={index}
-                onChange={(patch) => updateBlock(block.id, patch)}
-                onRemove={() =>
-                  setBlocks((items) =>
-                    items.filter((item) => item.id !== block.id),
-                  )
-                }
-              />
+              <SortableBlock key={block.id} block={{ ...block, sortOrder: index }} index={index} onChange={(patch) => updateBlock(block.id, patch)} onRemove={() => setBlocks((items) => items.filter((item) => item.id !== block.id))} />
             ))}
           </SortableContext>
         </DndContext>
-      </div>
+      </details>
       <div className="admin-card">
         <h2>Revision history</h2>
         <ul className="admin-list">

@@ -2,13 +2,26 @@
 
 Use `/admin` to edit the portfolio. Sign in with the email and password used during bootstrap.
 
+## Visual editor workflow
+
+The visual editor is intended to let you work on a page or project as a layout
+of content elements instead of editing code. Open the page or project, select
+an element, and edit its text, link, image, or other available field. Add new
+elements when needed, move them to reorder the page, and use the style controls
+for spacing, type, color, and alignment. The preview modes use the same
+validated page format as the public site.
+
+Use **Undo** and **Redo** to step through recent changes. Check the desktop and
+narrow-screen responsive previews before you publish so content remains legible
+and controls remain easy to use.
+
 ## Safe editing cycle
 
 1. Open a page or project.
-2. Edit the friendly fields.
+2. Edit the friendly fields or visual elements.
 3. Select **Save draft**. Visitors still see the last published version.
-4. Select **Preview draft** and inspect it.
-5. Select **Publish** when ready.
+4. Select **Preview draft** and inspect both available preview modes.
+5. Select **Publish** only when the draft is ready for visitors.
 
 Public means visible after publication. Unlisted is for a direct link. Private is hidden. The AI assistant uses only published, public content marked **Include in AI knowledge**.
 
@@ -16,9 +29,22 @@ Project fields include tags, context, contribution, outcome, links, and assets. 
 
 The Metamorphysis integration imports reviewed content into this site; local edits do not change the source account. Analytics are available in the private dashboard configured during deployment.
 
+## AI key safety
+
+Never put an AI provider key, admin token, password, or other secret into page
+content, this guide, or a screenshot. The only place to enter an OpenAI key in
+the browser is the designated credential field under **AI assistant**. It is
+sent over HTTPS, encrypted on the server, and never displayed again. The public
+assistant should receive only the approved content boundary; a key is never
+portfolio content.
+
 ## Public style guide
 
-Avoid decorative mini-headers, green status indicators, and unnecessary project-status badges. Use plain language, concrete evidence, and restrained labels. These rules apply to public content and branding, not practical controls inside the private admin area.
+Ban decorative all-caps eyebrow or kicker labels and status-dot decoration.
+Use normal sentence-case headings and explain meaningful status with text. Keep
+the interface plain, concrete, and restrained. These rules apply to both the
+public site and decorative treatment inside the private admin. Normal form
+labels and text-backed validation or system status remain appropriate.
 
 ## Live analytics
 

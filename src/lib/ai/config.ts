@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { getRuntimeAiCredentials } from './settings';
 
 const optionalPositiveInt = (fallback: number, maximum: number) => z.preprocess(
   (value) => value === undefined || value === '' ? fallback : Number(value),
@@ -77,6 +78,14 @@ export function getAiConfig(): AiConfig {
         : undefined;
 
   return { ...parsed, enabled: !disabledReason, disabledReason };
+}
+
+export async function getRuntimeAiConfig(): Promise<AiConfig> {
+  const config = getAiConfig();
+  const credentials = await getRuntimeAiCredentials();
+  const merged = { ...config, apiKey: credentials.apiKey, model: credentials.model, enabledFlag: credentials.enabledFlag };
+  const disabledReason = !merged.enabledFlag ? 'disabled' : !merged.apiKey ? 'missing_api_key' : !merged.model ? 'missing_model' : undefined;
+  return { ...merged, enabled: !disabledReason, disabledReason };
 }
 
 export function assertAiEnabled(config = getAiConfig()): asserts config is AiConfig & { enabled: true; apiKey: string; model: string } {

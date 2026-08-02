@@ -10,7 +10,6 @@ export default async function AdminHomePage() {
     <>
       <div className="admin-heading">
         <div>
-          <p className="admin-kicker">Authenticated editor</p>
           <h1>Content workspace</h1>
           <p>Changes stay in draft until you explicitly publish them.</p>
           <div className="admin-actions">

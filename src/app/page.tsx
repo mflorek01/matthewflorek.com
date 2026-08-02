@@ -4,14 +4,19 @@ import { SiteShell } from '@/components/site/SiteShell';
 import { getPublicPortfolio } from '@/lib/content/portfolio';
 import { resolvePreview } from '@/lib/content/preview';
 import { PortfolioAiChat } from '@/components/ai/PortfolioAiChat';
-import { getAiConfig } from '@/lib/ai/config';
+import { getRuntimeAiConfig } from '@/lib/ai/config';
+import { loadVisualPageDocument } from '@/lib/visual-editor';
+import { VisualPage } from '@/components/site/VisualPage';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage({ searchParams }: { searchParams?: Promise<Record<string, string | string[] | undefined>> }) {
   const preview = await resolvePreview(searchParams, '/?preview=1');
-  const { overview, githubRepositories } = await getPublicPortfolio({ preview });
-  const aiEnabled = getAiConfig().enabled;
+  const portfolio = await getPublicPortfolio({ preview });
+  const { overview, githubRepositories } = portfolio;
+  const [aiConfig, visualDocument] = await Promise.all([getRuntimeAiConfig(), loadVisualPageDocument('overview', preview)]);
+  const aiEnabled = aiConfig.enabled;
+  if (visualDocument) return <SiteShell><VisualPage document={visualDocument} portfolio={portfolio} aiEnabled={aiEnabled} /></SiteShell>;
   return <SiteShell>
     <section className="hero shell">
       <div className="hero-copy">

@@ -8,15 +8,15 @@ This guide governs the public-facing Matthew Florek portfolio and Metamorphysis.
 - Do not use decorative green availability/status dots or “online” indicators. They imply live operational state without adding meaning.
 - Do not expose internal publication language to visitors: `PUBLIC`, `PRIVATE`, `UNLISTED`, “draft,” “review required,” provenance, source IDs, conflict counts, or approval workflow belong in the private admin UI.
 - Do not stack buzzwords. Prefer one concrete verb, object, outcome, and audience over strings such as “AI-powered, data-driven, innovative solutions.”
-- Do not use `DATA`, `AI`, or `OPS` pill badges as decoration. If a category matters, state it in a sentence or use a meaningful navigation label.
+- Do not scatter `DATA`, `AI`, or `OPS` pill badges through the interface. The one intentional exception is the large orbital artwork on the portfolio home page, where the three labels are part of the approved composition.
 
 Legitimate semantic status indicators remain appropriate in private admin, form validation, save confirmation, error, and system-health UI. They must have text, an accessible role/name, and never rely on color or a dot alone.
 
 ## Brand mark and favicon
 
-The blue orbital mark is an abstract identity asset, not a logo lockup with initials or category badges.
+The blue orbital mark is an abstract identity asset, not a logo lockup with initials.
 
-- Use the supplied blue/cyan orbital form with no initials, surrounding text pills, `DATA`/`AI`/`OPS` labels, or extra ornaments.
+- Header and favicon versions use the supplied blue/cyan orbital form with no initials, surrounding text pills, `DATA`/`AI`/`OPS` labels, or extra ornaments. The large home-page hero version retains its approved `DATA`, `AI`, and `OPS` labels.
 - Preserve clear space equal to at least the diameter of the central orb on every side. Never crop the orbit, squeeze it, stretch it, rotate it, or recolor it outside the approved blue/cyan palette.
 - Header mark: use a compact 28–36px square visual, optically centered, with enough clear space that the orbit remains legible. Pair it with “Matthew Florek” as ordinary text when the name is needed; do not put the name in a pill.
 - Favicon: use a simplified, centered orb/orbit silhouette without initials or labels. Provide a 32px favicon and an SVG or 180–512px source for high-density contexts. Keep the central shape recognizable at 16px.

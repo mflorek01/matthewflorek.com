@@ -6,16 +6,18 @@ export default function AdminHelpPage() {
       <Link href="/admin" className="admin-back">
         ← Workspace
       </Link>
-      <p className="admin-kicker">Owner guide</p>
       <h1>How to edit your portfolio</h1>
       <p>
         This private editor lets you change words, links, projects, and selected
-        assets without changing code.
+        assets without changing code. The page preview uses the same validated
+        layout format as the public site.
       </p>
-      <h2>Basic workflow</h2>
+      <h2>Visual editing workflow</h2>
       <ol>
-        <li>Open a page or project.</li>
-        <li>Make your changes.</li>
+        <li>Open a page or project and choose the part of the layout to edit.</li>
+        <li>Add an element when you need new content, then edit its text, link, or asset.</li>
+        <li>Reorder elements by moving them into the order you want.</li>
+        <li>Use the available style controls for readable spacing, type, color, and alignment.</li>
         <li>
           <strong>Save draft</strong> stores them privately; visitors still see
           the published version.
@@ -27,6 +29,11 @@ export default function AdminHelpPage() {
           <strong>Publish</strong> makes the current draft public.
         </li>
       </ol>
+      <p>
+        Use <strong>Undo</strong> and <strong>Redo</strong> to step through recent
+        editor changes. Check both desktop and narrow-screen responsive views
+        before publishing so text, images, and controls remain usable.
+      </p>
       <h2>Visibility and AI</h2>
       <p>
         <strong>Public</strong> means visitors can see the item after
@@ -61,13 +68,18 @@ export default function AdminHelpPage() {
       <h2>Sign-in</h2>
       <p>
         Use the email and password used during bootstrap. Do not put those
-        credentials into this guide or share them with visitors.
+        credentials, API keys, tokens, or other secrets into this guide or share
+        them with visitors. Enter an OpenAI key only in the designated masked
+        credential field under <Link href="/admin/ai">AI assistant</Link>; never
+        paste one into page content.
       </p>
-      <h2>Public style notes</h2>
+      <h2>Style guide note</h2>
       <p>
-        The public site avoids decorative mini-labels, green status dots, and
-        unnecessary status badges. These rules apply to public content and
-        branding, not practical admin controls.
+        Do not add decorative all-caps eyebrow or kicker labels, or status-dot
+        decoration. Use a normal sentence-case heading and explain status with
+        text when it matters. These rules apply to public content and decorative
+        admin treatment. Practical form labels and text-backed validation remain
+        appropriate.
       </p>
     </article>
   );

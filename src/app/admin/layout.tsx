@@ -21,8 +21,11 @@ export default async function AdminLayout({
         </Link>
         {!isLoginRoute ? (
           <nav className="admin-nav">
+            <Link href="/admin">Pages/Home</Link>
+            <Link href="/admin/ai">AI assistant</Link>
+            <Link href="/admin/integrations/metamorphysis">Integrations</Link>
             <Link href="/admin/analytics">Analytics</Link>
-            <Link href="/admin/help">How to use this</Link>
+            <Link href="/admin/help">Help</Link>
             <form action="/api/auth/logout" method="post">
               <button className="admin-button admin-button-muted" type="submit">
                 Sign out

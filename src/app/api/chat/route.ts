@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { aiChatRequestSchema } from '@/lib/ai/types';
-import { getAiConfig, assertAiEnabled } from '@/lib/ai/config';
+import { getRuntimeAiConfig, assertAiEnabled } from '@/lib/ai/config';
 import { containsAbuseSignal, looksLikePromptInjection } from '@/lib/ai/abuse';
 import { retrievePublicEvidence } from '@/lib/ai/boundary';
 import { AiBodyTooLargeError, AiInvalidJsonError, readBoundedJson } from '@/lib/ai/body';
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
   let settlementFailureRecorded = false;
   let concurrencyAcquired = false;
   try {
-    const config = getAiConfig();
+    const config = await getRuntimeAiConfig();
     assertAiEnabled(config);
     let body: unknown;
     try {
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ answer, citations, requestId });
   } catch (error) {
     if (reservation && !settlementFailureRecorded) {
-      settlementFailureRecorded = await recordAiSettlementFailure({ reservation, requestId, model: getAiConfig().model ?? 'unknown' });
+      settlementFailureRecorded = await recordAiSettlementFailure({ reservation, requestId, model: (await getRuntimeAiConfig()).model ?? 'unknown' });
     }
     console.warn('[ai] request failed', aiFailureLog(error, requestId));
     return jsonError('The public assistant is temporarily unavailable. Please try again later.', 503, 30);

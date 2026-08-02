@@ -1,6 +1,6 @@
 # Guarded public AI assistant
 
-This slice adds a server-only public assistant at `POST /api/chat`. It uses the OpenAI Responses API and is fail-closed unless `ENABLE_AI_FEATURES=true`, `OPENAI_API_KEY`, and `OPENAI_MODEL` are all present. `OPENAI_MODEL` is intentionally not defaulted; setting `OPENAI_MODEL=gpt-5.6-sol` is the current recommended starting point, but the application will not silently change another use case's model.
+This slice adds a server-only public assistant at `POST /api/chat`. It uses the OpenAI Responses API and is fail-closed unless an enabled configuration contains both an API key and a model. The preferred setup is the encrypted **AI assistant** screen in the private admin. Environment variables remain a deployment fallback.
 
 ## Knowledge boundary
 
@@ -28,12 +28,12 @@ The assistant has no web, code-execution, MCP, function, or data-changing tools.
 
 ## Environment variables
 
-Required to enable the assistant:
+Environment fallback for enabling the assistant:
 
 ```text
 ENABLE_AI_FEATURES=true
 OPENAI_API_KEY=server-only-key
-OPENAI_MODEL=gpt-5.6-sol
+OPENAI_MODEL=<a Responses API model available to this OpenAI project>
 ```
 
 Optional hosted retrieval:
@@ -50,6 +50,7 @@ AI_RATE_LIMIT_SALT=<32+ character random secret>
 AI_TRUSTED_PROXY=true
 AI_ADMIN_TOKEN=<32+ character random secret>
 AI_KNOWLEDGE_ROOT=/absolute/path/to/approved/knowledge
+ADMIN_SETTINGS_ENCRYPTION_KEY=<32-byte hex or base64 secret>
 ```
 
 Operational tuning variables include `AI_MAX_MESSAGES`, `AI_MAX_MESSAGE_CHARS`, `AI_MAX_PROMPT_CHARS`, `AI_MAX_OUTPUT_TOKENS`, `AI_MAX_CONCURRENT`, `AI_RATE_LIMIT_REQUESTS`, `AI_RATE_LIMIT_WINDOW_SECONDS`, `AI_DAILY_CALL_LIMIT`, `AI_DAILY_DOLLAR_LIMIT`, `AI_INPUT_COST_PER_MILLION_USD`, and `AI_OUTPUT_COST_PER_MILLION_USD`. Defaults are conservative and can be overridden without changing code. Set the cost rates to match the configured model before enabling production traffic.
@@ -58,7 +59,7 @@ Operational tuning variables include `AI_MAX_MESSAGES`, `AI_MAX_MESSAGE_CHARS`, 
 
 `PortfolioAiChat` is rendered on the Overview page when the assistant is enabled. Project detail pages expose the guarded “Ask about this project” handoff, which opens the same component with the approved project slug and title. The components use only the existing safe analytics event names and send a project slug—not the question—to analytics.
 
-The admin status page is `/admin/ai` and requires the normal authenticated admin session. The protected document inspection endpoint is `GET /api/ai/admin/knowledge` with the `X-AI-Admin-Token` header. It never returns document content or private records. There is no knowledge-upload UI in this slice; publication is a reviewed server-side operation.
+The admin settings page is `/admin/ai` and requires the normal authenticated admin session. It can set or replace the API key, verify it, choose the model, enable or disable the assistant, and remove the stored credential. Keys are encrypted with AES-256-GCM, are never returned to the browser, and are represented only by their last four characters. The protected document inspection endpoint is `GET /api/ai/admin/knowledge` with the `X-AI-Admin-Token` header. It never returns document content or private records. Knowledge-file publication remains a reviewed server-side operation.
 
 ## Verification
 

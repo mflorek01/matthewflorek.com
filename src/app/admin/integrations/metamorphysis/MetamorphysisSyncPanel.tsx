@@ -41,7 +41,6 @@ export function MetamorphysisSyncPanel() {
   }
 
   return <section className="page-section">
-    <p className="admin-kicker">Admin · Integrations</p>
     <h1>Metamorphysis sync</h1>
     <p className="lede">Import a bounded, read-only project export. Imports stay private or need review until you approve them for local editing.</p>
     <label className="field-label" htmlFor="admin-token">Admin token</label>

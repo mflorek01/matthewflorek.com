@@ -10,6 +10,10 @@ async function nextPageVersion(pageId: string) {
 }
 
 export async function listPages() {
+  await Promise.all([
+    prisma.cmsPage.upsert({ where: { slug: 'work' }, update: {}, create: { slug: 'work', title: 'Work Projects' } }),
+    prisma.cmsPage.upsert({ where: { slug: 'ai' }, update: {}, create: { slug: 'ai', title: 'AI Projects' } })
+  ]);
   return prisma.cmsPage.findMany({ include: { blocks: { orderBy: { sortOrder: 'asc' } }, revisions: { orderBy: { version: 'desc' }, take: 5 } }, orderBy: { slug: 'asc' } });
 }
 

@@ -28,5 +28,5 @@ export default function AdminLoginPage() {
     window.location.assign(safeAdminRedirect(searchParams.get('next')));
   }
 
-  return <main className="admin-login"><div className="admin-card"><p className="admin-kicker">Private workspace</p><h1>Portfolio CMS</h1><p>Sign in to edit drafts and publish approved changes.</p><form onSubmit={submit} className="admin-form"><label>Email<input name="email" type="email" autoComplete="username" required /></label><label>Password<input name="password" type="password" autoComplete="current-password" required /></label>{error && <p className="admin-error" role="alert">{error}</p>}<button className="admin-button admin-button-primary" type="submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button></form></div></main>;
+  return <main className="admin-login"><div className="admin-card"><h1>Portfolio CMS</h1><p>Sign in to edit drafts and publish approved changes.</p><form onSubmit={submit} className="admin-form"><label>Email<input name="email" type="email" autoComplete="username" required /></label><label>Password<input name="password" type="password" autoComplete="current-password" required /></label>{error && <p className="admin-error" role="alert">{error}</p>}<button className="admin-button admin-button-primary" type="submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button></form></div></main>;
 }
