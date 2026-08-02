@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
+import Image from 'next/image';
 import { PortfolioAiChat } from '@/components/ai/PortfolioAiChat';
 import { TrackedLink } from '@/components/analytics/TrackedLink';
 import { ProjectExplorer } from '@/components/portfolio/ProjectExplorer';
@@ -38,7 +39,7 @@ function styleFor(block: VisualBlock): CSSProperties & Record<string, string | n
 }
 
 function Orbit() {
-  return <div className={styles.orbitWrap} aria-hidden="true"><div className="hero-orbit"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orbit-core" /><span className="orbit-tag orbit-tag-data">DATA</span><span className="orbit-tag orbit-tag-ai">AI</span><span className="orbit-tag orbit-tag-ops">OPS</span></div></div>;
+  return <div className={styles.orbitWrap} aria-hidden="true"><div className="hero-orbit"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orbit-core"><Image className="orbit-headshot" src="/assets/matthew-florek-headshot-2026.jpg" width={300} height={300} sizes="(max-width: 760px) 190px, 250px" alt="" /></div><span className="orbit-tag orbit-tag-data">DATA</span><span className="orbit-tag orbit-tag-ai">AI</span><span className="orbit-tag orbit-tag-ops">OPS</span></div></div>;
 }
 
 function renderBlock(block: VisualBlock, portfolio: PortfolioContent, aiEnabled: boolean): ReactNode {

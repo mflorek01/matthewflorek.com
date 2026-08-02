@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { TrackedLink } from '@/components/analytics/TrackedLink';
 import { SectionHeading } from '@/components/site/SectionHeading';
 import { SiteShell } from '@/components/site/SiteShell';
@@ -28,7 +29,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
           <TrackedLink href="/ai" event="contact_cta_clicked" properties={{ cta: 'explore-ai-projects' }} className="button button-secondary">Explore AI projects</TrackedLink>
         </div>
       </div>
-      <div className="hero-orbit" aria-hidden="true"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orbit-core" /><span className="orbit-tag orbit-tag-data">DATA</span><span className="orbit-tag orbit-tag-ai">AI</span><span className="orbit-tag orbit-tag-ops">OPS</span></div>
+      <div className="hero-orbit" aria-hidden="true"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orbit-core"><Image className="orbit-headshot" src="/assets/matthew-florek-headshot-2026.jpg" width={300} height={300} sizes="(max-width: 760px) 190px, 250px" alt="" priority /></div><span className="orbit-tag orbit-tag-data">DATA</span><span className="orbit-tag orbit-tag-ai">AI</span><span className="orbit-tag orbit-tag-ops">OPS</span></div>
     </section>
     <section className="shell page-section intro-grid">
       <div><SectionHeading title="Analysis is the starting point, not the limit." /></div>
