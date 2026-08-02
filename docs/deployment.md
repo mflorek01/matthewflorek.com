@@ -1,5 +1,10 @@
 # Portfolio deployment guide
 
+For the shared-server procedure covering both applications, see
+[Shared Hetzner deployment workflow](./dual-site-workflow.md). It explains the
+separate release boundaries and the intentional Caddy state owned by
+Metamorphysis.
+
 This guide is the entry point for operating the portfolio application. It
 describes the boundaries and links to the detailed runbooks; it does not grant
 permission to modify the Hetzner server, DNS, or the root-owned Metamorphysis
