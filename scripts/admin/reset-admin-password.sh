@@ -102,7 +102,7 @@ if ! docker exec \
   -e RESET_CHECK_EMAIL="$admin_email" \
   -e RESET_CHECK_PASSWORD="$new_password" \
   "$portfolio_container" \
-  node -e "fetch('http://127.0.0.1:3000/api/auth/login',{method:'POST',headers:{origin:'http://127.0.0.1:3000',host:'127.0.0.1:3000','content-type':'application/json'},body:JSON.stringify({email:process.env.RESET_CHECK_EMAIL,password:process.env.RESET_CHECK_PASSWORD})}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"; then
+  node -e "fetch('http://127.0.0.1:3000/api/auth/login',{method:'POST',headers:{origin:'http://127.0.0.1:3000','x-forwarded-proto':'http','x-forwarded-host':'127.0.0.1:3000','content-type':'application/json'},body:JSON.stringify({email:process.env.RESET_CHECK_EMAIL,password:process.env.RESET_CHECK_PASSWORD})}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"; then
   printf 'The password was updated, but login verification failed. Review the backup and app logs.\n' >&2
   exit 5
 fi

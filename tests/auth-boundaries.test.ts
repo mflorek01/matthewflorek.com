@@ -8,6 +8,18 @@ describe('auth boundaries', () => {
     expect(() => assertSameOrigin(new Request('https://example.test/api/admin/projects/1'))).toThrow('Missing origin');
   });
 
+  it('uses the trusted forwarded origin behind the reverse proxy', () => {
+    const request = new Request('http://portfolio:3000/api/auth/login', {
+      headers: {
+        origin: 'https://matthewflorek.com',
+        'x-forwarded-proto': 'https',
+        'x-forwarded-host': 'matthewflorek.com'
+      }
+    });
+    expect(() => assertSameOrigin(request)).not.toThrow();
+    expect(() => assertSameOrigin(new Request(request, { headers: { ...Object.fromEntries(request.headers), origin: 'https://attacker.test' } }))).toThrow(CsrfError);
+  });
+
   it('sets opaque session cookies with secure browser defaults', () => {
     const cookie = sessionCookie('opaque-token');
     expect(cookie.httpOnly).toBe(true);
