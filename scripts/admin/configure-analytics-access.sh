@@ -4,6 +4,11 @@ set -Eeuo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ENV_FILE="${PORTFOLIO_ENV_FILE:-$ROOT_DIR/.env}"
 COMPOSE_FILE="$ROOT_DIR/compose.yml"
+COMPOSE_FILES=(-f "$COMPOSE_FILE")
+if [[ -f "$ROOT_DIR/compose.umami.yml" ]]; then
+  COMPOSE_FILES+=(-f "$ROOT_DIR/compose.umami.yml")
+fi
+compose() { docker compose --env-file "$ENV_FILE" "${COMPOSE_FILES[@]}" "$@"; }
 
 for command in docker curl mktemp; do
   command -v "$command" >/dev/null 2>&1 || {
@@ -21,7 +26,7 @@ grep -Eq '^UMAMI_WEBSITE_ID=.+$' "$ENV_FILE" || {
   exit 2
 }
 
-portfolio_container="$(docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" ps -q portfolio)"
+portfolio_container="$(compose ps -q portfolio)"
 [[ -n "$portfolio_container" ]] || {
   printf 'The portfolio container is not running. Deploy the site first.\n' >&2
   exit 3
@@ -86,8 +91,7 @@ rm -f "$next_file"
 trap - EXIT
 
 current_image="$(docker inspect --format '{{.Config.Image}}' "$portfolio_container")"
-PORTFOLIO_IMAGE="$current_image" docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" \
-  up -d --no-deps --force-recreate portfolio
+PORTFOLIO_IMAGE="$current_image" compose up -d --no-deps --force-recreate portfolio
 
 host_port="${PORTFOLIO_HOST_PORT:-3101}"
 for _ in $(seq 1 30); do

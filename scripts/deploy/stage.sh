@@ -10,6 +10,12 @@ if [[ ! -f "$ENV_FILE" ]]; then
   exit 2
 fi
 
+COMPOSE_FILES=(-f compose.yml)
+if [[ -f compose.umami.yml ]]; then
+  COMPOSE_FILES+=(-f compose.umami.yml)
+fi
+compose() { docker compose --env-file "$ENV_FILE" "${COMPOSE_FILES[@]}" "$@"; }
+
 for command in docker git; do
   command -v "$command" >/dev/null 2>&1 || {
     printf 'Required command is unavailable: %s\n' "$command" >&2
@@ -26,8 +32,8 @@ export VCS_REF="${VCS_REF:-$(git rev-parse HEAD)}"
 export PORTFOLIO_IMAGE="${PORTFOLIO_IMAGE:-portfolio-redesign:${VCS_REF}}"
 export PORTFOLIO_MIGRATOR_IMAGE="${PORTFOLIO_MIGRATOR_IMAGE:-portfolio-redesign-migrator:${VCS_REF}}"
 
-docker compose --env-file "$ENV_FILE" -f compose.yml config --quiet
-docker compose --env-file "$ENV_FILE" -f compose.yml build --pull=false portfolio portfolio-migrate
+compose config --quiet
+compose build --pull=false portfolio portfolio-migrate
 
 printf 'Staging images built: %s and %s\n' "$PORTFOLIO_IMAGE" "$PORTFOLIO_MIGRATOR_IMAGE"
 printf 'Next bounded checks: start the candidate with the staging environment, run migrations against a disposable database, then exercise /api/health?db=1.\n'

@@ -43,27 +43,33 @@ export VCS_REF="$ACTUAL_REF"
 export PORTFOLIO_IMAGE="${PORTFOLIO_IMAGE:-portfolio-redesign:${ACTUAL_REF}}"
 export PORTFOLIO_MIGRATOR_IMAGE="${PORTFOLIO_MIGRATOR_IMAGE:-portfolio-redesign-migrator:${ACTUAL_REF}}"
 
-docker compose --env-file "$ENV_FILE" -f compose.yml config --quiet
-docker compose --env-file "$ENV_FILE" -f compose.yml build --pull=false portfolio portfolio-migrate
-docker compose --env-file "$ENV_FILE" -f compose.yml up -d postgres
+COMPOSE_FILES=(-f compose.yml)
+if [[ -f compose.umami.yml ]]; then
+  COMPOSE_FILES+=(-f compose.umami.yml)
+fi
+compose() { docker compose --env-file "$ENV_FILE" "${COMPOSE_FILES[@]}" "$@"; }
+
+compose config --quiet
+compose build --pull=false portfolio portfolio-migrate
+compose up -d postgres
 for attempt in {1..30}; do
-  if docker compose --env-file "$ENV_FILE" -f compose.yml exec -T postgres \
+  if compose exec -T postgres \
     sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"' >/dev/null 2>&1; then
     break
   fi
   if [[ "$attempt" == 30 ]]; then
     printf 'Portfolio PostgreSQL did not become ready.\n' >&2
-    docker compose --env-file "$ENV_FILE" -f compose.yml ps >&2 || true
+    compose ps >&2 || true
     exit 1
   fi
   sleep 2
 done
-docker compose --env-file "$ENV_FILE" -f compose.yml run --rm portfolio-migrate npx prisma migrate deploy
-docker compose --env-file "$ENV_FILE" -f compose.yml up -d portfolio
+compose run --rm portfolio-migrate npx prisma migrate deploy
+compose up -d portfolio
 
 for attempt in {1..12}; do
   if curl --fail --silent --show-error --max-time 5 "http://127.0.0.1:${PORTFOLIO_HOST_PORT:-3101}/api/health?db=1" >/dev/null; then
-    container_id="$(docker compose --env-file "$ENV_FILE" -f compose.yml ps -q portfolio)"
+    container_id="$(compose ps -q portfolio)"
     image_revision="$(docker inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$container_id")"
     if [[ "$image_revision" == "$ACTUAL_REF" ]]; then
       printf 'Portfolio release %s is healthy and reports the expected image revision.\n' "$ACTUAL_REF"
@@ -76,6 +82,6 @@ for attempt in {1..12}; do
 done
 
 printf 'Portfolio did not become healthy.\n' >&2
-docker compose --env-file "$ENV_FILE" -f compose.yml ps >&2 || true
-docker compose --env-file "$ENV_FILE" -f compose.yml logs --tail=100 portfolio >&2 || true
+compose ps >&2 || true
+compose logs --tail=100 portfolio >&2 || true
 exit 1

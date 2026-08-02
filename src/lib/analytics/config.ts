@@ -1,5 +1,6 @@
 export const analyticsPreferenceStorageKey = 'portfolio-analytics-preference';
 export const analyticsDisabledStorageKey = 'portfolio-analytics-disabled';
+export const umamiDisabledStorageKey = 'umami.disabled';
 
 export type AnalyticsMode = 'off' | 'cookieless' | 'consent';
 export type AnalyticsPreference = 'opt-in' | 'opt-out';
@@ -76,7 +77,8 @@ export function getAnalyticsPreference(): AnalyticsPreference | null {
     if (preference === 'opt-in' || preference === 'opt-out') return preference;
 
     // Migrate the previous local opt-out without treating it as consent.
-    if (window.localStorage.getItem(analyticsDisabledStorageKey) === 'true') return 'opt-out';
+    if (window.localStorage.getItem(analyticsDisabledStorageKey) === 'true'
+      || window.localStorage.getItem(umamiDisabledStorageKey) === '1') return 'opt-out';
     return null;
   } catch {
     return null;
@@ -101,6 +103,8 @@ export function setAnalyticsPreference(preference: AnalyticsPreference | null) {
     window.localStorage.removeItem(analyticsDisabledStorageKey);
     if (preference) window.localStorage.setItem(analyticsPreferenceStorageKey, preference);
     else window.localStorage.removeItem(analyticsPreferenceStorageKey);
+    if (preference === 'opt-out') window.localStorage.setItem(umamiDisabledStorageKey, '1');
+    else window.localStorage.removeItem(umamiDisabledStorageKey);
     window.dispatchEvent(new CustomEvent('portfolio-analytics-preference-changed'));
   } catch {
     // Storage/events can be unavailable in privacy modes; analytics remains off for consent mode.

@@ -47,4 +47,29 @@
 .admin-login { display: grid; place-items: center; min-height: 100vh; padding: 20px; background: #f3f6fb; }
 .admin-login .admin-card { width: min(430px, 100%); }
 .analytics-number { display: block; margin-top: 6px; color: #00133f; font-size: 2rem; letter-spacing: -.04em; }
-@media (max-width: 720px) { .admin-main { width: min(100% - 28px, 1180px); padding-top: 32px; } .admin-heading { align-items: start; flex-direction: column; } .admin-grid, .admin-form-grid { grid-template-columns: 1fr; } .admin-link-row { grid-template-columns: 30px 1fr; } .admin-link-row input:last-child { grid-column: 2; } .admin-list li { align-items: start; flex-direction: column; } }
+.analytics-metric-card { min-height: 150px; }
+.analytics-chart-card { overflow: hidden; }
+.analytics-chart { margin: 0; }
+.analytics-chart-heading { display: flex; align-items: start; justify-content: space-between; gap: 20px; margin-bottom: 10px; }
+.analytics-chart-heading h2 { margin-bottom: 5px; }
+.analytics-chart-heading p { margin: 0; }
+.analytics-chart svg { display: block; width: 100%; min-height: 250px; overflow: visible; }
+.analytics-axis { stroke: #d9e1eb; stroke-width: 1; }
+.analytics-line { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 3; }
+.analytics-line-visitors { stroke: #2350d7; }
+.analytics-line-visits { stroke: #16a6c7; }
+.analytics-line-pageviews { stroke: #8a5cf6; }
+.analytics-label { fill: #607080; font-size: 11px; }
+.analytics-legend { display: flex; flex-wrap: wrap; justify-content: end; gap: 8px 14px; color: #607080; font-size: .75rem; font-weight: 700; }
+.analytics-legend span::before { display: inline-block; width: 9px; height: 9px; margin-right: 5px; border-radius: 50%; content: ""; }
+.legend-visitors::before { background: #2350d7; }
+.legend-visits::before { background: #16a6c7; }
+.legend-pageviews::before { background: #8a5cf6; }
+.analytics-retention-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 20px 0; }
+.analytics-retention-grid > div { display: grid; gap: 5px; padding: 17px; border-radius: 10px; background: linear-gradient(135deg, #f4f7ff, #effbff); }
+.analytics-retention-number { color: #00133f; font-size: 2rem; letter-spacing: -.04em; }
+.analytics-cohort-list { display: grid; gap: 7px; }
+.analytics-cohort-row { display: grid; grid-template-columns: 1fr repeat(3, auto); gap: 14px; align-items: center; padding: 10px 12px; border-top: 1px solid #e2e8f0; color: #607080; font-size: .8rem; }
+.analytics-cohort-row span:first-child { color: #10213f; font-weight: 700; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (max-width: 720px) { .admin-main { width: min(100% - 28px, 1180px); padding-top: 32px; } .admin-heading { align-items: start; flex-direction: column; } .admin-grid, .admin-form-grid, .analytics-retention-grid { grid-template-columns: 1fr; } .admin-link-row { grid-template-columns: 30px 1fr; } .admin-link-row input:last-child { grid-column: 2; } .admin-list li { align-items: start; flex-direction: column; } .analytics-chart-heading { flex-direction: column; } .analytics-legend { justify-content: start; } .analytics-cohort-row { grid-template-columns: 1fr 1fr; gap: 5px 10px; } }

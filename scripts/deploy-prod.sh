@@ -74,6 +74,12 @@ docker compose version >/dev/null 2>&1 || {
   exit 2
 }
 
+COMPOSE_FILES=(-f "$ROOT_DIR/compose.yml")
+if [[ -f "$ROOT_DIR/compose.umami.yml" ]]; then
+  COMPOSE_FILES+=(-f "$ROOT_DIR/compose.umami.yml")
+fi
+compose() { docker compose --env-file "$ENV_FILE" "${COMPOSE_FILES[@]}" "$@"; }
+
 git_release() {
   git -c safe.directory="$ROOT_DIR" "$@"
 }
@@ -104,7 +110,7 @@ target_ref="$(git_release rev-parse --verify "${RELEASE_REF}^{commit}")" || {
 target_short="$(git_release rev-parse --short=12 "$target_ref")"
 
 running_ref=""
-container_id="$(docker compose --env-file "$ENV_FILE" -f "$ROOT_DIR/compose.yml" ps -q portfolio 2>/dev/null || true)"
+container_id="$(compose ps -q portfolio 2>/dev/null || true)"
 if [[ -n "$container_id" ]]; then
   running_ref="$(docker inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$container_id" 2>/dev/null || true)"
 fi
@@ -164,9 +170,13 @@ PORTFOLIO_ENV_FILE="$ENV_FILE" \
 
 if [[ "$REFRESH_CONTENT" -eq 1 ]]; then
   printf 'Publishing the reviewed portfolio content refresh...\n'
+  RELEASE_COMPOSE_FILES=(-f "$release_worktree/compose.yml")
+  if [[ -f "$release_worktree/compose.umami.yml" ]]; then
+    RELEASE_COMPOSE_FILES+=(-f "$release_worktree/compose.umami.yml")
+  fi
   PORTFOLIO_ENV_FILE="$ENV_FILE" \
     PORTFOLIO_MIGRATOR_IMAGE="portfolio-redesign-migrator:${target_ref}" \
-    docker compose --env-file "$ENV_FILE" -f "$release_worktree/compose.yml" run --rm \
+    docker compose --env-file "$ENV_FILE" "${RELEASE_COMPOSE_FILES[@]}" run --rm \
       -e CONFIRM_CONTENT_REFRESH=YES \
       portfolio-migrate node scripts/admin/apply-content-refresh.mjs
 fi

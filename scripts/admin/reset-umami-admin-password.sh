@@ -6,6 +6,8 @@ ENV_FILE="${PORTFOLIO_ENV_FILE:-$ROOT_DIR/.env}"
 COMPOSE_FILE="$ROOT_DIR/compose.umami.yml"
 PORTFOLIO_COMPOSE_FILE="$ROOT_DIR/compose.yml"
 BACKUP_DIR="${PORTFOLIO_BACKUP_DIR:-$ROOT_DIR/../backups/portfolio}"
+COMPOSE_FILES=(-f "$PORTFOLIO_COMPOSE_FILE" -f "$COMPOSE_FILE")
+compose() { docker compose --env-file "$ENV_FILE" "${COMPOSE_FILES[@]}" "$@"; }
 
 for command in docker curl mktemp python3 sha256sum; do
   command -v "$command" >/dev/null 2>&1 || {
@@ -30,19 +32,19 @@ set +a
 : "${UMAMI_POSTGRES_DB:?UMAMI_POSTGRES_DB is missing from $ENV_FILE}"
 : "${UMAMI_POSTGRES_USER:?UMAMI_POSTGRES_USER is missing from $ENV_FILE}"
 
-umami_db_container="$(docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" ps -q umami-postgres)"
+umami_db_container="$(compose ps -q umami-postgres)"
 [[ -n "$umami_db_container" ]] || {
   printf 'The Umami database container is not running. Start the analytics services first.\n' >&2
   exit 3
 }
 
-portfolio_container="$(docker compose --env-file "$ENV_FILE" -f "$PORTFOLIO_COMPOSE_FILE" ps -q portfolio)"
+portfolio_container="$(compose ps -q portfolio)"
 [[ -n "$portfolio_container" ]] || {
   printf 'The portfolio container is not running. Deploy the site first.\n' >&2
   exit 3
 }
 
-admin_users="$(docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" exec -T umami-postgres \
+admin_users="$(compose exec -T umami-postgres \
   psql --no-psqlrc -v ON_ERROR_STOP=1 -U "$UMAMI_POSTGRES_USER" -d "$UMAMI_POSTGRES_DB" -Atq \
   -c 'SELECT username FROM "user" WHERE role = '\''admin'\'' AND deleted_at IS NULL ORDER BY username;' </dev/null)"
 
@@ -87,7 +89,7 @@ timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
 backup_file="$BACKUP_DIR/umami-before-password-reset-$timestamp.dump"
 
 printf 'Creating a database backup before the password change...\n'
-docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" exec -T umami-postgres \
+compose exec -T umami-postgres \
   pg_dump -U "$UMAMI_POSTGRES_USER" -d "$UMAMI_POSTGRES_DB" --format=custom </dev/null > "$backup_file"
 sha256sum "$backup_file" > "$backup_file.sha256"
 chmod 600 "$backup_file" "$backup_file.sha256"
@@ -108,7 +110,7 @@ print(
 )
 PY
 )"
-docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" exec -T umami-postgres \
+compose exec -T umami-postgres \
   psql --no-psqlrc -v ON_ERROR_STOP=1 \
   -U "$UMAMI_POSTGRES_USER" -d "$UMAMI_POSTGRES_DB" -c "$update_sql" </dev/null
 

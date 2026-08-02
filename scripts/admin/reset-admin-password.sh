@@ -5,6 +5,11 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ENV_FILE="${PORTFOLIO_ENV_FILE:-$ROOT_DIR/.env}"
 COMPOSE_FILE="$ROOT_DIR/compose.yml"
 BACKUP_ROOT="${BACKUP_ROOT:-/home/codexdiag/backups/portfolio}"
+COMPOSE_FILES=(-f "$COMPOSE_FILE")
+if [[ -f "$ROOT_DIR/compose.umami.yml" ]]; then
+  COMPOSE_FILES+=(-f "$ROOT_DIR/compose.umami.yml")
+fi
+compose() { docker compose --env-file "$ENV_FILE" "${COMPOSE_FILES[@]}" "$@"; }
 
 for command in docker curl; do
   command -v "$command" >/dev/null 2>&1 || {
@@ -15,7 +20,7 @@ done
 [[ -f "$ENV_FILE" ]] || { printf 'Portfolio environment file not found: %s\n' "$ENV_FILE" >&2; exit 2; }
 [[ -f "$COMPOSE_FILE" ]] || { printf 'Portfolio Compose file not found: %s\n' "$COMPOSE_FILE" >&2; exit 2; }
 
-portfolio_container="$(docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" ps -q portfolio)"
+portfolio_container="$(compose ps -q portfolio)"
 [[ -n "$portfolio_container" ]] || {
   printf 'The portfolio container is not running. Deploy the site first.\n' >&2
   exit 3
@@ -57,7 +62,7 @@ try {
 }'
 
 run_admin_node() {
-  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" --profile operations run --rm -T \
+  compose --profile operations run --rm -T \
     -e RESET_ADMIN_MODE="${RESET_ADMIN_MODE:-}" \
     -e RESET_ADMIN_EMAIL="${RESET_ADMIN_EMAIL:-}" \
     -e RESET_ADMIN_PASSWORD="${RESET_ADMIN_PASSWORD:-}" \

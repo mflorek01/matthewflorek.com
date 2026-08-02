@@ -22,7 +22,7 @@ import {
   type VisualBlock,
   type VisualPageDocument,
 } from "@/lib/visual-editor";
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import styles from "./VisualEditor.module.css";
 
 export type VisualEditorProps = {
@@ -113,16 +113,69 @@ function EditableText({
   className?: string;
   onChange: (value: string) => void;
 }) {
+  const elementRef = useRef<HTMLElement | null>(null);
+  const editingRef = useRef(false);
+  const lastInputValueRef = useRef(value);
+
+  // Do not give React a text child here. React reconciling that child after
+  // every input is what causes the browser to lose its caret position.
+  // Instead, the browser owns the text node while editing and this effect
+  // applies only actual external changes (inspector edits, undo/redo, or a
+  // newly selected block).
+  useLayoutEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
+
+    const currentValue = element.textContent ?? "";
+    if (currentValue === value) {
+      lastInputValueRef.current = value;
+      return;
+    }
+
+    const valueIsFromThisEditor = lastInputValueRef.current === value;
+    if (!editingRef.current || valueIsFromThisEditor) {
+      element.textContent = value;
+      lastInputValueRef.current = value;
+    }
+  }, [value]);
+
   return (
     <Tag
+      ref={(element: HTMLElement | null) => {
+        elementRef.current = element;
+      }}
       className={className}
       contentEditable
       suppressContentEditableWarning
       spellCheck
-      onInput={(event) => onChange(event.currentTarget.textContent ?? "")}
-    >
-      {value}
-    </Tag>
+      role="textbox"
+      aria-label="Edit text"
+      aria-multiline="true"
+      onFocus={() => {
+        editingRef.current = true;
+      }}
+      onInput={(event) => {
+        const nextValue = event.currentTarget.textContent ?? "";
+        lastInputValueRef.current = nextValue;
+        onChange(nextValue);
+      }}
+      onBlur={() => {
+        editingRef.current = false;
+        const nextValue = elementRef.current?.textContent ?? "";
+        if (nextValue === value) return;
+
+        // If another control changed the value while this surface had focus,
+        // prefer that external value. Otherwise this is a final browser edit
+        // that has not reached the parent yet, so commit it once.
+        if (lastInputValueRef.current === nextValue) {
+          if (elementRef.current) elementRef.current.textContent = value;
+          lastInputValueRef.current = value;
+        } else {
+          lastInputValueRef.current = nextValue;
+          onChange(nextValue);
+        }
+      }}
+    />
   );
 }
 

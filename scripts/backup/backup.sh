@@ -29,6 +29,12 @@ if [[ ! -f "$ENV_FILE" ]]; then
   exit 2
 fi
 
+COMPOSE_FILES=(-f compose.yml)
+if [[ -f compose.umami.yml ]]; then
+  COMPOSE_FILES+=(-f compose.umami.yml)
+fi
+compose() { docker compose --env-file "$ENV_FILE" "${COMPOSE_FILES[@]}" "$@"; }
+
 umask 077
 mkdir -p "$BACKUP_ROOT"
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
@@ -36,17 +42,17 @@ target="$BACKUP_ROOT/portfolio-${stamp}-$$.dump"
 temporary="$(mktemp "$BACKUP_ROOT/.portfolio-${stamp}.XXXXXX")"
 trap 'rm -f "$temporary"' EXIT
 
-if ! docker compose --env-file "$ENV_FILE" -f compose.yml exec -T postgres \
+if ! compose exec -T postgres \
   sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"' >/dev/null 2>&1; then
   printf 'Portfolio PostgreSQL is not ready; refusing to create a backup.\n' >&2
   exit 1
 fi
 
-docker compose --env-file "$ENV_FILE" -f compose.yml exec -T postgres \
+compose exec -T postgres \
   sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" --format=custom --no-owner --no-acl' > "$temporary"
 
 test -s "$temporary"
-docker compose --env-file "$ENV_FILE" -f compose.yml exec -T postgres pg_restore --list < "$temporary" >/dev/null
+compose exec -T postgres pg_restore --list < "$temporary" >/dev/null
 mv "$temporary" "$target"
 sha256sum "$target" > "$target.sha256"
 chmod 600 "$target" "$target.sha256"
