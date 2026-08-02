@@ -56,7 +56,7 @@ function TrendChart({ points }: { points: AnalyticsTrendPoint[] }) {
 }
 
 function Retention({ summary }: { summary: Awaited<ReturnType<typeof getAnalyticsSummary>> }) {
-  const value = (rate: number | null) => rate == null ? "—" : `${rate}%`;
+  const value = (rate: number | null) => rate == null ? "—" : `${Math.round(rate * 10) / 10}%`;
   return (
     <section className="admin-card analytics-retention">
       <div className="analytics-chart-heading"><div><h2>Returning visitors</h2><p className="admin-help-text">Cohorts are grouped by their first visit. Rates are weighted by cohort size.</p></div></div>
@@ -64,7 +64,7 @@ function Retention({ summary }: { summary: Awaited<ReturnType<typeof getAnalytic
         <div><span className="admin-help-text">Day-1 return rate</span><strong className="analytics-retention-number">{value(summary.retention.day1ReturnRate)}</strong><span className="admin-help-text">Returned the next day</span></div>
         <div><span className="admin-help-text">Day-7 return rate</span><strong className="analytics-retention-number">{value(summary.retention.day7ReturnRate)}</strong><span className="admin-help-text">Returned seven days later</span></div>
       </div>
-      {summary.retention.cohorts.length ? <div className="analytics-cohort-list" aria-label="Recent visitor cohorts">{summary.retention.cohorts.slice(-7).map((cohort) => <div className="analytics-cohort-row" key={cohort.date}><span>{cohort.date}</span><span>{cohort.visitors.toLocaleString()} visitors</span><span>Day 1: {value(cohort.day1)}</span><span>Day 7: {value(cohort.day7)}</span></div>)}</div> : <p className="admin-help-text">Retention will appear after Umami has enough cohort data.</p>}
+      {summary.retention.cohorts.length ? <div className="analytics-cohort-list" aria-label="Recent visitor cohorts">{summary.retention.cohorts.slice(-7).map((cohort) => <div className="analytics-cohort-row" key={cohort.date}><span>{cohort.date}</span><span>{cohort.visitors.toLocaleString()} {cohort.visitors === 1 ? "visitor" : "visitors"}</span><span>Day 1: {value(cohort.day1)}</span><span>Day 7: {value(cohort.day7)}</span></div>)}</div> : <p className="admin-help-text">Retention will appear after Umami has enough cohort data.</p>}
     </section>
   );
 }
