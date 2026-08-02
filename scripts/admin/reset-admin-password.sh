@@ -30,6 +30,13 @@ try {
     const users = await prisma.adminUser.findMany({ where: { isActive: true }, select: { email: true }, orderBy: { email: "asc" } });
     for (const user of users) console.log(user.email);
     process.exitCode = users.length ? 0 : 1;
+  } else if (process.env.RESET_ADMIN_MODE === "verify") {
+    const email = process.env.RESET_ADMIN_EMAIL?.trim().toLowerCase();
+    const password = process.env.RESET_ADMIN_PASSWORD;
+    const user = email ? await prisma.adminUser.findUnique({ where: { email } }) : null;
+    if (!user || !user.isActive || !password || !(await bcrypt.compare(password, user.passwordHash))) {
+      throw new Error("The stored administrator password did not pass verification.");
+    }
   } else {
     if (process.env.CONFIRM_RESET_ADMIN !== "YES") throw new Error("Reset confirmation is missing.");
     const email = process.env.RESET_ADMIN_EMAIL?.trim().toLowerCase();
@@ -98,11 +105,7 @@ BACKUP_ROOT="$BACKUP_ROOT" PORTFOLIO_ENV_FILE="$ENV_FILE" bash "$ROOT_DIR/script
 
 RESET_ADMIN_MODE=reset RESET_ADMIN_EMAIL="$admin_email" RESET_ADMIN_PASSWORD="$new_password" CONFIRM_RESET_ADMIN=YES run_admin_node
 
-if ! docker exec \
-  -e RESET_CHECK_EMAIL="$admin_email" \
-  -e RESET_CHECK_PASSWORD="$new_password" \
-  "$portfolio_container" \
-  node -e "fetch('http://127.0.0.1:3000/api/auth/login',{method:'POST',headers:{origin:'http://127.0.0.1:3000','x-forwarded-proto':'http','x-forwarded-host':'127.0.0.1:3000','content-type':'application/json'},body:JSON.stringify({email:process.env.RESET_CHECK_EMAIL,password:process.env.RESET_CHECK_PASSWORD})}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"; then
+if ! RESET_ADMIN_MODE=verify RESET_ADMIN_EMAIL="$admin_email" RESET_ADMIN_PASSWORD="$new_password" run_admin_node; then
   printf 'The password was updated, but login verification failed. Review the backup and app logs.\n' >&2
   exit 5
 fi
