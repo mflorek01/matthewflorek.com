@@ -42,7 +42,7 @@ export function defaultVisualDocument(slug: string, overview?: { name?: string; 
     block('home-story-title', 'heading', { level: 'h2', text: 'Analysis is the starting point, not the limit.' }, { desktopSpan: 5, fontSize: 'title', paddingTop: 72 }),
     block('home-story', 'text', { text: longBio }, { desktopSpan: 7, fontSize: 'large', textColor: '#607080', paddingTop: 72 }),
     block('home-skills', 'skills', {}, { paddingTop: 56, paddingBottom: 56 }),
-    block('home-links', 'profile-links', {}, { desktopSpan: 7, paddingTop: 48, paddingBottom: 64 }),
-    block('home-chat', 'chat', {}, { desktopSpan: 5, paddingTop: 48, paddingBottom: 64 })
+    block('home-links', 'profile-links', {}, { desktopSpan: 12, align: 'center', paddingTop: 48, paddingBottom: 36 }),
+    block('home-chat', 'chat', {}, { desktopSpan: 12, paddingTop: 16, paddingBottom: 64 })
   ] };
 }

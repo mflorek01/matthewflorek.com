@@ -1,0 +1,20 @@
+{
+  "source": "Approved public career context derived from Matthew's Metamorphysis profile",
+  "roles": [
+    {
+      "id": "experience:ade",
+      "title": "Arizona Department of Education — Data Analyst",
+      "excerpt": "Matthew works as a Data Analyst with the Arizona Department of Education in Phoenix, supporting statewide education-grant operations, compliance monitoring, and federal reporting. He builds and maintains reporting infrastructure for ESEA consolidated programs, 21st CCLC, EHCY, and Foster Care teams. His work combines SQL Server, Excel, Power Query, Power Pivot, Power Automate, SharePoint, and geospatial analysis. He has queried student datasets reaching approximately 27 million rows, built historical snapshot and archival systems, supported multiple downstream dashboards, investigated missing or malformed records and SIS synchronization issues, and advised school districts on data quality and reporting. He also builds automation and user-friendly internal tools under constraints such as limited direct source-system access and no Power BI access. Notable examples include a contact workflow that reduced list generation from about 45 minutes to 2–3 minutes, repeatable report extraction through Power Automate Desktop, statewide district mapping, and AI-assisted development across SQL, Power Query, VBA, JavaScript, and Power Automate."
+    },
+    {
+      "id": "experience:neuromemex",
+      "title": "Neuromemex — Data Analyst Intern",
+      "excerpt": "Matthew previously worked as a Data Analyst Intern at Neuromemex, supporting research and operational data workflows with data quality, Airtable, Excel, and structured analysis. This experience strengthened his interest in making messy information reliable and usable rather than treating analysis as a one-off output."
+    },
+    {
+      "id": "experience:dataannotation",
+      "title": "DataAnnotation.tech — AI Data Annotator",
+      "excerpt": "Matthew also worked as an AI Data Annotator with DataAnnotation.tech, evaluating model responses and contributing to human-feedback and prompt-quality workflows. That experience informs how he approaches AI systems: test claims against evidence, notice failure modes, and keep a human review path for consequential outputs."
+    }
+  ]
+}

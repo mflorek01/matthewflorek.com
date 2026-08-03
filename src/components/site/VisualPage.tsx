@@ -25,8 +25,9 @@ function safeHref(value?: string) {
 }
 
 function styleFor(block: VisualBlock): CSSProperties & Record<string, string | number> {
+  const fullWidth = block.type === 'profile-links' || block.type === 'chat';
   return {
-    gridColumn: `span ${block.style.desktopSpan}`,
+    gridColumn: `span ${fullWidth ? 12 : block.style.desktopSpan}`,
     '--tablet-span': block.style.tabletSpan,
     '--mobile-span': block.style.mobileSpan,
     paddingTop: block.style.paddingTop,
@@ -67,7 +68,7 @@ function renderBlock(block: VisualBlock, portfolio: PortfolioContent, aiEnabled:
     case 'skills':
       return <div className={styles.skills}>{portfolio.overview.skills.map((skill) => <span className="skill-pill" key={skill}>{skill}</span>)}</div>;
     case 'profile-links':
-      return <div className={styles.profileLinks}>{portfolio.overview.links.map((link) => <TrackedLink key={link.url} href={link.url} event="external_link_clicked" properties={{ source: link.label }} target="_blank" rel="noreferrer" className="button button-secondary">{link.label}</TrackedLink>)}{portfolio.overview.resumeAsset ? <TrackedLink href={portfolio.overview.resumeAsset.path} event="resume_downloaded" properties={{ source: 'visual-page' }} className="button button-secondary" download>Download résumé</TrackedLink> : null}</div>;
+       return <div className={styles.profileLinks}>{portfolio.overview.links.map((link) => <TrackedLink key={link.url} href={link.url} event="external_link_clicked" properties={{ source: link.label }} target="_blank" rel="noreferrer" className="button button-secondary">{link.label}</TrackedLink>)}{portfolio.overview.resumeAsset ? <TrackedLink href={portfolio.overview.resumeAsset.path} event="resume_downloaded" properties={{ source: 'visual-page' }} className="button button-resume" download>Download résumé</TrackedLink> : null}</div>;
     case 'projects': {
       const projects = portfolio.projects.filter((project) => project.category === content.category);
       return <div className={styles.projects}><h2>{content.category === 'AI' ? 'Selected AI projects' : 'Selected work'}</h2><p>Search by project, tool, or theme. Open a card for the problem, approach, and outcome.</p><ProjectExplorer projects={projects} emptyTitle="No projects are published yet." emptyCopy="Published projects will appear here." /></div>;

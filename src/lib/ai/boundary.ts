@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { aiOverview, aiProjects } from '@/lib/content/portfolio';
+import careerContext from '../../../content/ai-career-context.json';
 import { prisma } from '@/lib/db';
 import { getAiConfig } from './config';
 import type { AiEvidence, AiRetrieval } from './types';
@@ -28,6 +29,9 @@ function staticEvidence(): AiEvidence[] {
       sourceType: 'overview',
       excerpt: [aiOverview.headline, aiOverview.shortBio, aiOverview.longBio, `Skills: ${aiOverview.skills.join(', ')}`, `Education: ${aiOverview.education.map((item) => `${item.credential}, ${item.institution} (${item.year})`).join('; ')}`].map(cleanText).filter(Boolean).join(' ')
     });
+  }
+  for (const role of careerContext.roles) {
+    result.push({ id: role.id, title: role.title, sourceType: 'experience', excerpt: cleanText(role.excerpt) });
   }
   for (const project of aiProjects) {
     const sourceUrl = project.links.map(publicLinkUrl).find(Boolean);
@@ -122,7 +126,7 @@ export async function retrievePublicEvidence(query: string, projectSlug?: string
   const all = [...staticEvidence(), ...dynamic.evidence];
   const unique = Array.from(new Map(all.map((item) => [item.id, item])).values());
   return {
-    evidence: unique.sort((left, right) => scoreEvidence(right, query, projectSlug) - scoreEvidence(left, query, projectSlug)).slice(0, 6),
+    evidence: unique.sort((left, right) => scoreEvidence(right, query, projectSlug) - scoreEvidence(left, query, projectSlug)).slice(0, 9),
     vectorStoreIds: dynamic.vectorStoreIds
   };
 }

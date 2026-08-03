@@ -15,7 +15,7 @@ export type AiMessage = z.infer<typeof aiMessageSchema>;
 export type AiEvidence = {
   id: string;
   title: string;
-  sourceType: 'project' | 'page' | 'document' | 'overview';
+  sourceType: 'project' | 'page' | 'document' | 'overview' | 'experience';
   excerpt: string;
   sourceUrl?: string;
   projectSlug?: string;
