@@ -59,7 +59,9 @@ ARG VCS_REF=unknown
 LABEL org.opencontainers.image.revision=$VCS_REF
 
 RUN groupadd --system --gid 1001 nodejs \
-    && useradd --system --uid 1001 --gid nodejs nextjs
+    && useradd --system --uid 1001 --gid nodejs nextjs \
+    && mkdir -p /app/storage/portfolio-assets /app/storage/ai-knowledge /app/.data/assets \
+    && chown -R nextjs:nodejs /app/storage /app/.data
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static

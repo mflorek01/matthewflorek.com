@@ -27,7 +27,15 @@ Public means visible after publication. Unlisted is for a direct link. Private i
 
 Project fields include tags, context, contribution, outcome, links, and assets. Advanced JSON is an escape hatch for extra fields. Every save creates a revision; **Restore as draft** brings back an older version without publishing it.
 
+## Resume and profile buttons
+
+On the Overview page, use **Resume download** to upload a replacement PDF. The upload is stored outside the release image so it survives future deployments. The page still needs **Save draft** and **Publish** before visitors receive the new file. The LinkedIn and GitHub button URLs can be changed in the same Overview section; leave a URL blank to remove that button.
+
 The Metamorphysis integration imports reviewed content into this site; local edits do not change the source account. Analytics are available in the private dashboard configured during deployment.
+
+## AI reference documents
+
+Open **AI assistant** in the admin navigation. Upload a UTF-8 text document (TXT, Markdown, CSV, or JSON), optionally give it a clearer title, and it will appear as a draft. Drafts are not used by the public assistant. Select **Publish for AI** only after reviewing the file; select **Unpublish** to stop using it while keeping it available for later, or **Archive** to retire it. The assistant can use only published documents that are explicitly active.
 
 ## AI key safety
 

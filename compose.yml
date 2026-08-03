@@ -44,6 +44,12 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
       DATABASE_URL: postgresql://${POSTGRES_USER:-portfolio}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the host environment}@postgres:5432/${POSTGRES_DB:-portfolio}
+      PORTFOLIO_UPLOAD_DIR: /app/storage/portfolio-assets
+      AI_KNOWLEDGE_ROOT: /app/storage/ai-knowledge
+    volumes:
+      - portfolio_uploads:/app/storage/portfolio-assets
+      - portfolio_ai_knowledge:/app/storage/ai-knowledge
+      - portfolio_project_assets:/app/.data/assets
     ports:
       - "127.0.0.1:${PORTFOLIO_HOST_PORT:-3101}:3000"
     networks:
@@ -96,6 +102,12 @@ services:
 volumes:
   portfolio_postgres_data:
     name: portfolio_postgres_data
+  portfolio_uploads:
+    name: portfolio_uploads
+  portfolio_ai_knowledge:
+    name: portfolio_ai_knowledge
+  portfolio_project_assets:
+    name: portfolio_project_assets
 
 networks:
   portfolio_private:

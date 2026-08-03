@@ -44,7 +44,8 @@ type OverviewData = {
   shortBio?: string;
   longBio?: string;
   skills?: string[];
-  resumeAsset?: { path?: string } | null;
+  links?: Array<{ label?: string; url?: string; visibility?: string; publicationStatus?: string }>;
+  resumeAsset?: { path?: string; publicationStatus?: string } | null;
   portraitAsset?: { path?: string } | null;
   [key: string]: unknown;
 };
@@ -73,6 +74,8 @@ function OverviewFields({
   block: EditableBlock;
   onChange: (patch: Partial<EditableBlock>) => void;
 }) {
+  const [uploadingResume, setUploadingResume] = useState(false);
+  const [resumeMessage, setResumeMessage] = useState("");
   let envelope: OverviewEnvelope = {};
   try {
     envelope = JSON.parse(block.dataText) as OverviewEnvelope;
@@ -94,6 +97,36 @@ function OverviewFields({
       : nextOverview;
     onChange({ dataText: JSON.stringify(nextData, null, 2) });
   };
+  const linkUrl = (label: string) => {
+    const link = data.links?.find((item) => item.label?.toLowerCase() === label.toLowerCase());
+    return link?.url ?? "";
+  };
+  const setLink = (label: string, url: string) => {
+    const links = Array.isArray(data.links) ? [...data.links] : [];
+    const index = links.findIndex((item) => item.label?.toLowerCase() === label.toLowerCase());
+    const next = { label, url, visibility: "PUBLIC", publicationStatus: "PUBLIC" };
+    if (index >= 0) links[index] = { ...links[index], ...next };
+    else links.push(next);
+    set("links", links.filter((item) => item.url?.trim()));
+  };
+  async function uploadResume(file: File | undefined) {
+    if (!file) return;
+    setUploadingResume(true);
+    setResumeMessage("");
+    try {
+      const form = new FormData();
+      form.set("file", file);
+      const response = await fetch("/api/admin/portfolio-assets", { method: "POST", body: form });
+      const payload = await response.json().catch(() => null) as { asset?: { path?: string }; error?: string } | null;
+      if (!response.ok || !payload?.asset?.path) throw new Error(payload?.error || "Unable to upload the resume");
+      set("resumeAsset", { ...(data.resumeAsset ?? {}), path: payload.asset.path, publicationStatus: "PUBLIC" });
+      setResumeMessage("Uploaded. Save and publish this page to make it live.");
+    } catch (error) {
+      setResumeMessage(error instanceof Error ? error.message : "Unable to upload the resume");
+    } finally {
+      setUploadingResume(false);
+    }
+  }
   return (
     <>
       <div className="admin-form-grid">
@@ -127,7 +160,7 @@ function OverviewFields({
           />
         </label>
         <label>
-          Resume asset path
+          Resume download
           <input
             value={data.resumeAsset?.path ?? ""}
             onChange={(e) =>
@@ -137,6 +170,9 @@ function OverviewFields({
               })
             }
           />
+          <span className="admin-help-text">Current path. Upload a replacement below.</span>
+          <input type="file" accept="application/pdf,.pdf" disabled={uploadingResume} onChange={(e) => uploadResume(e.target.files?.[0])} />
+          {resumeMessage ? <span className="admin-help-text" role="status">{resumeMessage}</span> : null}
         </label>
         <label>
           Portrait asset path
@@ -149,6 +185,16 @@ function OverviewFields({
               })
             }
           />
+        </label>
+      </div>
+      <div className="admin-form-grid">
+        <label>
+          LinkedIn button URL
+          <input type="url" value={linkUrl("LinkedIn")} placeholder="https://linkedin.com/in/..." onChange={(e) => setLink("LinkedIn", e.target.value)} />
+        </label>
+        <label>
+          GitHub button URL
+          <input type="url" value={linkUrl("GitHub")} placeholder="https://github.com/..." onChange={(e) => setLink("GitHub", e.target.value)} />
         </label>
       </div>
       <label>
