@@ -86,9 +86,9 @@
       }
     ],
     "resumeAsset": {
-      "path": "/downloads/matthew-florek-resume.pdf",
+      "path": "/downloads/matthew-florek-resume.pdf?v=2026-08-06",
       "publicationStatus": "PUBLIC",
-      "provenance": "Recovered from prior public site commit e8b37db; Matthew should confirm that the document is current and still intended for public distribution."
+      "provenance": "Current resume supplied by Matthew Florek on 2026-08-06; ?v= query busts caches of the prior download."
     },
     "portraitAsset": {
       "path": "/assets/matthew-florek-headshot-2026.jpg",
