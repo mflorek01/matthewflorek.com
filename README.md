@@ -1,6 +1,8 @@
-# Matthew Florek portfolio foundation
+# Matthew Florek portfolio
 
-This branch contains the application foundation for the portfolio redesign. The public experience, visual editor, Metamorphysis import, external Umami analytics, and visitor AI assistant will layer on top of these contracts.
+This repository is the maintained source for the production portfolio at matthewflorek.com. It contains the public experience, visual editor, Metamorphysis import, external Umami analytics, and visitor AI assistant.
+
+The former GitHub Pages placeholder is preserved in `archive/github-pages-legacy/` for reference. The repository root—not that archive—is the deployable application.
 
 ## Local setup
 
@@ -52,6 +54,6 @@ server with node server.js. The image includes the checked-in content/ source,
 generated Prisma client, public assets, and the /api/health readiness check; it
 does not require a second reverse proxy inside the container.
 
-## Deployment boundary
+## Production deployment
 
-This foundation is not deployed by this branch. Production deployment will require a reviewed migration rehearsal, a separate portfolio Compose project/database, a backup and restore rehearsal, and a root-authorized Caddy route for `matthewflorek.com`. The current diagnostic SSH account can operate an unprivileged application checkout but cannot edit the root-owned Caddy configuration without interactive sudo authorization.
+Use `scripts/deploy-prod.sh` from the production checkout after syncing the reviewed branch. The deployment script creates a database backup, builds the pinned release, runs migrations, verifies the image revision, and performs a readiness check. The root-authorized edge configuration is maintained separately by `scripts/edge/apply-root-edge.sh`.
