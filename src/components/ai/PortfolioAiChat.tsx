@@ -1,19 +1,36 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { trackAnalyticsEvent } from '@/lib/analytics/client';
 import type { AiCitation, AiMessage } from '@/lib/ai/types';
 import styles from './PortfolioAiChat.module.css';
 
 type Props = { projectSlug?: string; projectTitle?: string };
 
-function formatInline(text: string): ReactNode[] {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => part.startsWith('**') && part.endsWith('**')
-    ? <strong key={`${part}-${index}`}>{part.slice(2, -2)}</strong>
-    : <span key={`${part}-${index}`}>{part}</span>);
+function formatInline(text: string, citations: AiCitation[], citationPrefix: string): ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*|\[E\d+\])/g).map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) return <strong key={`${part}-${index}`}>{part.slice(2, -2)}</strong>;
+    const marker = /^\[E(\d+)\]$/.exec(part);
+    if (!marker) return <span key={`${part}-${index}`}>{part}</span>;
+    const evidenceNumber = Number(marker[1]);
+    const citation = citations[evidenceNumber - 1];
+    if (!citation) return <span key={`${part}-${index}`}>{part}</span>;
+    const href = citation.sourceUrl || `#${citationPrefix}-${evidenceNumber}`;
+    return (
+      <a
+        className={styles.citationMarker}
+        href={href}
+        key={`${part}-${index}`}
+        aria-label={`${part} ${citation.title}`}
+        {...(citation.sourceUrl ? { target: '_blank', rel: 'noreferrer' } : {})}
+      >
+        {part}
+      </a>
+    );
+  });
 }
 
-function FormattedMessage({ content }: { content: string }) {
+function FormattedMessage({ content, citations, citationPrefix }: { content: string; citations: AiCitation[]; citationPrefix: string }) {
   const blocks: ReactNode[] = [];
   const lines = content.split(/\r?\n/);
   let paragraph: string[] = [];
@@ -21,14 +38,14 @@ function FormattedMessage({ content }: { content: string }) {
 
   function flushParagraph() {
     if (paragraph.length) {
-      blocks.push(<p key={`paragraph-${blocks.length}`}>{formatInline(paragraph.join(' '))}</p>);
+      blocks.push(<p key={`paragraph-${blocks.length}`}>{formatInline(paragraph.join(' '), citations, citationPrefix)}</p>);
       paragraph = [];
     }
   }
 
   function flushList() {
     if (list.length) {
-      blocks.push(<ul key={`list-${blocks.length}`}>{list.map((item, index) => <li key={`${item}-${index}`}>{formatInline(item)}</li>)}</ul>);
+      blocks.push(<ul key={`list-${blocks.length}`}>{list.map((item, index) => <li key={`${item}-${index}`}>{formatInline(item, citations, citationPrefix)}</li>)}</ul>);
       list = [];
     }
   }
@@ -52,6 +69,7 @@ function FormattedMessage({ content }: { content: string }) {
 }
 
 export function PortfolioAiChat({ projectSlug, projectTitle }: Props) {
+  const citationPrefix = `ai-source-${useId().replace(/:/g, '')}`;
   const [messages, setMessages] = useState<AiMessage[]>([]);
   const [question, setQuestion] = useState('');
   const [citations, setCitations] = useState<AiCitation[]>([]);
@@ -101,14 +119,8 @@ export function PortfolioAiChat({ projectSlug, projectTitle }: Props) {
   }
 
   return (
-    <section className={styles.chat} aria-labelledby="ai-chat-title">
-      <div className={styles.chatTopline}>
-        <div className={styles.chatIdentity}>
-          <span className={styles.chatOrb} aria-hidden="true" />
-          <h2 id="ai-chat-title">{projectTitle ? `Ask about ${projectTitle}` : 'Ask about Matthew’s work'}</h2>
-        </div>
-        {messages.length ? <button className={styles.newConversation} type="button" onClick={startNewConversation} disabled={busy}>New conversation</button> : null}
-      </div>
+    <section className={styles.chat} aria-label={projectTitle ? `Ask about ${projectTitle}` : 'Ask about Matthew’s work'}>
+      {messages.length ? <div className={styles.chatControls}><button className={styles.newConversation} type="button" onClick={startNewConversation} disabled={busy}>New conversation</button></div> : null}
 
       <div className={styles.transcript} aria-live="polite" aria-busy={busy}>
         {!messages.length && !busy ? <div className={styles.emptyState}><p>Ask me about Matthew’s work, projects, or experience.</p><span>Try “What kind of problems do you like solving?”</span></div> : null}
@@ -116,7 +128,7 @@ export function PortfolioAiChat({ projectSlug, projectTitle }: Props) {
           <div className={`${styles.messageRow} ${message.role === 'user' ? styles.userRow : styles.assistantRow}`} key={`${message.role}-${index}`}>
             <div className={`${styles.messageBubble} ${message.role === 'user' ? styles.userBubble : styles.assistantBubble}`}>
               <span className={styles.messageLabel}>{message.role === 'user' ? 'You' : 'Matthew’s assistant'}</span>
-              <div className={styles.messageContent}><FormattedMessage content={message.content} /></div>
+              <div className={styles.messageContent}><FormattedMessage content={message.content} citations={message.role === 'assistant' && index === messages.length - 1 ? citations : []} citationPrefix={citationPrefix} /></div>
             </div>
           </div>
         ))}
@@ -130,7 +142,7 @@ export function PortfolioAiChat({ projectSlug, projectTitle }: Props) {
         <span id="portfolio-ai-hint" className={styles.composerHint}>Enter to send · Shift + Enter for a new line</span>
       </form>
       {error ? <p role="alert" className={styles.error}>{error}</p> : null}
-      {citations.length ? <div className={styles.citations}><span>Based on</span>{citations.map((citation) => citation.sourceUrl ? <a key={citation.id} href={citation.sourceUrl}>{citation.title}</a> : <span key={citation.id}>{citation.title}</span>)}</div> : null}
+      {citations.length ? <div className={styles.citations}><span>Based on</span>{citations.map((citation, index) => citation.sourceUrl ? <a id={`${citationPrefix}-${index + 1}`} data-source-marker="true" key={citation.id} href={citation.sourceUrl} target="_blank" rel="noreferrer">{citation.title}</a> : <span id={`${citationPrefix}-${index + 1}`} data-source-marker="true" tabIndex={-1} key={citation.id}>{citation.title}</span>)}</div> : null}
     </section>
   );
 }

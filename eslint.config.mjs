@@ -6,7 +6,7 @@ const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
 
 export default tseslint.config(
   {
-    ignores: ['.next/**', 'next-env.d.ts', 'node_modules/**', 'prisma/migrations/**']
+    ignores: ['.next/**', 'archive/**', 'next-env.d.ts', 'node_modules/**', 'prisma/migrations/**']
   },
   js.configs.recommended,
   ...compat.extends('next/core-web-vitals'),
