@@ -34,7 +34,40 @@ matthewflorek.com {
         max_size 12MB
     }
 
-    reverse_proxy portfolio:3000
+    @sonoran_read_api {
+        method GET
+        path /portfolio/sonoran-ops/api/v1/health /portfolio/sonoran-ops/api/v1/operations* /portfolio/sonoran-ops/api/v1/assets* /portfolio/sonoran-ops/api/v1/observations* /portfolio/sonoran-ops/api/v1/findings* /portfolio/sonoran-ops/api/v1/incidents*
+    }
+    handle @sonoran_read_api {
+        uri strip_prefix /portfolio/sonoran-ops
+        reverse_proxy sonoran-api:8000
+    }
+
+    @sonoran_assistant_api {
+        method POST
+        path /portfolio/sonoran-ops/api/v1/assistant/tools/*
+    }
+    handle @sonoran_assistant_api {
+        request_body {
+            max_size 64KB
+        }
+        uri strip_prefix /portfolio/sonoran-ops
+        reverse_proxy sonoran-api:8000
+    }
+
+    @sonoran_denied_api path /portfolio/sonoran-ops/api/*
+    handle @sonoran_denied_api {
+        respond "Method Not Allowed" 405
+    }
+
+    @sonoran_web path /portfolio/sonoran-ops /portfolio/sonoran-ops/*
+    handle @sonoran_web {
+        reverse_proxy sonoran-web:3000
+    }
+
+    handle {
+        reverse_proxy portfolio:3000
+    }
 }
 
 www.matthewflorek.com {
